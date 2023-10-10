@@ -15,6 +15,7 @@ namespace Engine
 		private:
 			void init();
 			void run();
+			bool shouldClose();
 			void close();
 
 			const int WIDTH;

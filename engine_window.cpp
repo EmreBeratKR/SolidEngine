@@ -30,12 +30,17 @@ namespace Engine
 
 	void EngineWindow::run()
 	{
-		while (!glfwWindowShouldClose(m_Window))
+		while (!shouldClose())
 		{
 			glfwPollEvents();
 		}
 
 		close();
+	}
+
+	bool EngineWindow::shouldClose()
+	{
+		return glfwWindowShouldClose(m_Window);
 	}
 
 	void EngineWindow::close()
