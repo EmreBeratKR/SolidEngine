@@ -18,9 +18,10 @@ namespace Engine
 			bool shouldClose();
 			void close();
 
-			int m_Width;
-			int m_Height;
-			std::string m_Title;
+			const int WIDTH;
+			const int HEIGHT;
+			const std::string TITLE;
+
 			GLFWwindow* m_Window;
 	};
 }

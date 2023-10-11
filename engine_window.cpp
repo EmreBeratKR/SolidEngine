@@ -7,7 +7,7 @@
 namespace Engine
 {
 	EngineWindow::EngineWindow(int width, int height, std::string title)
-		: m_Width(width), m_Height(height), m_Title(title)
+		: WIDTH(width), HEIGHT(height), TITLE(title)
 	{
 		init();
 		run();
@@ -25,7 +25,7 @@ namespace Engine
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-		m_Window = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), nullptr, nullptr);
+		m_Window = glfwCreateWindow(WIDTH, HEIGHT, TITLE.c_str(), nullptr, nullptr);
 	}
 
 	void EngineWindow::run()
