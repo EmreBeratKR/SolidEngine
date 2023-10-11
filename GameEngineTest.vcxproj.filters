@@ -15,16 +15,33 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Core\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="engine_window.cpp">
+    <ClCompile Include="Core\engine_window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\render_pipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="engine_window.h">
+    <ClInclude Include="Core\engine_window.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\render_pipeline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Core\shader_compiler.bat">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="Core\Shaders\shader.frag">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="Core\Shaders\shader.vert">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

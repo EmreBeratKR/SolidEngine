@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\Microsoft Visual Studio\2022\Community\Libraries\glfw-3.3.8.bin.WIN64/include;C:\Program Files\Microsoft Visual Studio\2022\Community\Libraries\glm;C:\VulkanSDK\1.3.261.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Microsoft Visual Studio\2022\Community\Libraries\glfw-3.3.8.bin.WIN64/include;C:\Program Files\Microsoft Visual Studio\2022\Community\Libraries\glm;C:\VulkanSDK\1.3.261.1\Include;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -122,7 +122,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Program Files\Microsoft Visual Studio\2022\Community\Libraries\glfw-3.3.8.bin.WIN64/include;C:\Program Files\Microsoft Visual Studio\2022\Community\Libraries\glm;C:\VulkanSDK\1.3.261.1\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files\Microsoft Visual Studio\2022\Community\Libraries\glfw-3.3.8.bin.WIN64/include;C:\Program Files\Microsoft Visual Studio\2022\Community\Libraries\glm;C:\VulkanSDK\1.3.261.1\Include;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -135,11 +135,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="engine_window.cpp" />
+    <ClCompile Include="Core\main.cpp" />
+    <ClCompile Include="Core\engine_window.cpp" />
+    <ClCompile Include="Core\render_pipeline.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="engine_window.h" />
+    <ClInclude Include="Core\engine_window.h" />
+    <ClInclude Include="Core\render_pipeline.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Core\Shaders\shader.frag" />
+    <None Include="Core\Shaders\shader.vert" />
+    <None Include="Core\shader_compiler.bat" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
