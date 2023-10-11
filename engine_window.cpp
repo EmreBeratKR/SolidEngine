@@ -7,7 +7,7 @@
 namespace Engine
 {
 	EngineWindow::EngineWindow(int width, int height, std::string title)
-		: WIDTH{width}, HEIGHT{height}, TITLE{title}
+		: WIDTH(width), HEIGHT(height), TITLE(title)
 	{
 		init();
 		run();
