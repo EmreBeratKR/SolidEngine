@@ -21,7 +21,10 @@
     <ClCompile Include="Core\engine_window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\render_pipeline.cpp">
+    <ClCompile Include="Core\Rendering\render_pipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Rendering\vulkan_graphic_api.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,7 +32,10 @@
     <ClInclude Include="Core\engine_window.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\render_pipeline.h">
+    <ClInclude Include="Core\Rendering\render_pipeline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Rendering\vulkan_graphic_api.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
