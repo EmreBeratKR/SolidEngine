@@ -19,6 +19,16 @@ namespace Engine::Rendering
 
 	void VulkanGraphicApi::init()
 	{
+		createInstance();
+	}
+
+	void VulkanGraphicApi::createInstance()
+	{
+		if (!checkValidationLayerSupport())
+		{
+			throw std::runtime_error("validation layers requested, but not available!");
+		}
+
 		VkApplicationInfo appInfo{};
 
 		appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -32,6 +42,16 @@ namespace Engine::Rendering
 
 		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 		createInfo.pApplicationInfo = &appInfo;
+
+		if (enableValidationLayers) 
+		{
+			createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+			createInfo.ppEnabledLayerNames = validationLayers.data();
+		}
+		else
+		{
+			createInfo.enabledLayerCount = 0;
+		}
 
 		uint32_t glfwExtensionCount = 0;
 		const char** glfwExtensions;
@@ -52,5 +72,34 @@ namespace Engine::Rendering
 	void VulkanGraphicApi::cleanup()
 	{
 		vkDestroyInstance(instance, nullptr);
+	}
+
+	bool VulkanGraphicApi::checkValidationLayerSupport()
+	{
+		if (!enableValidationLayers) return true;
+
+		uint32_t layerCount;
+		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+		std::vector<VkLayerProperties> availableLayers(layerCount);
+		vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+
+		for (const char* layerName : validationLayers) 
+		{
+			bool layerFound = false;
+			
+			for (const auto& layerProperties : availableLayers) 
+			{
+				if (strcmp(layerName, layerProperties.layerName) == 0) 
+				{
+					layerFound = true;
+					break;
+				}
+			}
+
+			if (!layerFound) return false;
+		}
+
+		return true;
 	}
 }
