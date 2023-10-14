@@ -34,6 +34,7 @@ namespace Engine::Rendering
 		void createInstance();
 		void cleanup();
 		void selectPhysicalDevice();
+		void createLogicalDevice();
 
 		static int getPhysicalDeviceSuitabilityScore(VkPhysicalDevice physicalDevice);
 		static VkPhysicalDevice getBestSuitablePhysicalDevice(VkInstance instance);
@@ -41,6 +42,8 @@ namespace Engine::Rendering
 
 		VkInstance instance;
 		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
+		VkDevice logicalDevice;
+		VkQueue graphicsQueue;
 
 #ifdef DEBUG
 		void setupDebugMessenger();
