@@ -7,6 +7,7 @@
 #include "vulkan/vulkan.h"
 
 #include <vector>
+#include <optional>
 
 
 namespace Engine::Rendering
@@ -18,13 +19,25 @@ namespace Engine::Rendering
 		~VulkanGraphicApi();
 
 	private:
+		struct QueueFamilyIndices
+		{
+			std::optional<uint32_t> graphics;
+
+
+			bool isCompleted()
+			{
+				return graphics.has_value();
+			}
+		};
+
 		void init();
 		void createInstance();
-		void selectPhysicalDevice();
 		void cleanup();
+		void selectPhysicalDevice();
 
 		static int getPhysicalDeviceSuitabilityScore(VkPhysicalDevice physicalDevice);
 		static VkPhysicalDevice getBestSuitablePhysicalDevice(VkInstance instance);
+		static QueueFamilyIndices getQueueFamilyIndices(VkPhysicalDevice physicalDevice);
 
 		VkInstance instance;
 		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;

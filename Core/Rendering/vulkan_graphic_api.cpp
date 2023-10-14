@@ -78,6 +78,14 @@ namespace Engine::Rendering
 		}
 	}
 
+	void VulkanGraphicApi::cleanup()
+	{
+#ifdef DEBUG
+		DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+#endif
+		vkDestroyInstance(instance, nullptr);
+	}
+
 	void VulkanGraphicApi::selectPhysicalDevice()
 	{
 		physicalDevice = getBestSuitablePhysicalDevice(instance);
@@ -92,14 +100,6 @@ namespace Engine::Rendering
 #endif
 	}
 
-	void VulkanGraphicApi::cleanup()
-	{
-#ifdef DEBUG
-		DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
-#endif
-		vkDestroyInstance(instance, nullptr);
-	}
-
 
 	int VulkanGraphicApi::getPhysicalDeviceSuitabilityScore(VkPhysicalDevice physicalDevice)
 	{
@@ -111,6 +111,10 @@ namespace Engine::Rendering
 		vkGetPhysicalDeviceFeatures(physicalDevice, &deviceFeatures);
 
 		if (!deviceFeatures.geometryShader) return score;
+
+		QueueFamilyIndices queueFamilyIndices = getQueueFamilyIndices(physicalDevice);
+
+		if (!queueFamilyIndices.isCompleted()) return score;
 
 		if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
 		{
@@ -148,6 +152,32 @@ namespace Engine::Rendering
 		}
 
 		return bestDevice;
+	}
+
+	VulkanGraphicApi::QueueFamilyIndices VulkanGraphicApi::getQueueFamilyIndices(VkPhysicalDevice physicalDevice)
+	{
+		QueueFamilyIndices indices;
+		uint32_t queueFamilyCount = 0;
+
+		vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, nullptr);
+
+		std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+
+		vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilies.data());
+
+		int i = 0;
+
+		for (const auto& queueFamily : queueFamilies) 
+		{
+			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) 
+			{
+				indices.graphics = i;
+			}
+
+			i++;
+		}
+		
+		return indices;
 	}
 
 
