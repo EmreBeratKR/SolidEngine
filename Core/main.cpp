@@ -1,5 +1,4 @@
 #include "engine_window.h"
-#include "Rendering/render_pipeline.h"
 #include "Rendering/vulkan_graphic_api.h";
 
 

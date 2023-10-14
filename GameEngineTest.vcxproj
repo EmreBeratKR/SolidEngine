@@ -137,12 +137,10 @@
   <ItemGroup>
     <ClCompile Include="Core\main.cpp" />
     <ClCompile Include="Core\engine_window.cpp" />
-    <ClCompile Include="Core\Rendering\render_pipeline.cpp" />
     <ClCompile Include="Core\Rendering\vulkan_graphic_api.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\engine_window.h" />
-    <ClInclude Include="Core\Rendering\render_pipeline.h" />
     <ClInclude Include="Core\Rendering\vulkan_graphic_api.h" />
   </ItemGroup>
   <ItemGroup>
