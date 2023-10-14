@@ -68,6 +68,7 @@ namespace Engine::Rendering
 		void selectPhysicalDevice();
 		void createLogicalDevice();
 		void createSwapChain(GLFWwindow* window);
+		void createImageViews();
 
 		static int getPhysicalDeviceSuitabilityScore(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, std::vector<const char*> deviceExtensions);
 		static VkPhysicalDevice getBestSuitablePhysicalDevice(VkInstance instance, VkSurfaceKHR surface, std::vector<const char*> deviceExtensions);
@@ -85,9 +86,10 @@ namespace Engine::Rendering
 		VkQueue presentQueue;
 		VkSurfaceKHR surface;
 		VkSwapchainKHR swapChain;
-		std::vector<VkImage> swapChainImages;
 		VkFormat swapChainImageFormat;
 		VkExtent2D swapChainExtent;
+		std::vector<VkImage> swapChainImages;
+		std::vector<VkImageView> swapChainImageViews;
 
 		const std::vector<const char*> deviceExtensions = 
 		{
