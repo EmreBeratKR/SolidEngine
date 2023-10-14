@@ -20,9 +20,14 @@ namespace Engine::Rendering
 	private:
 		void init();
 		void createInstance();
+		void selectPhysicalDevice();
 		void cleanup();
 
+		static int getPhysicalDeviceSuitabilityScore(VkPhysicalDevice physicalDevice);
+		static VkPhysicalDevice getBestSuitablePhysicalDevice(VkInstance instance);
+
 		VkInstance instance;
+		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 
 #ifdef DEBUG
 		void setupDebugMessenger();
@@ -38,11 +43,13 @@ namespace Engine::Rendering
 			VkInstance instance,
 			VkDebugUtilsMessengerEXT debugMessenger,
 			const VkAllocationCallbacks* pAllocator);
+
 		static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 			VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
 			VkDebugUtilsMessageTypeFlagsEXT messageType,
 			const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
 			void* pUserData);
+		static void logPhysicalDeviceProperties(VkPhysicalDevice physicalDevice);
 
 		VkDebugUtilsMessengerEXT debugMessenger;
 

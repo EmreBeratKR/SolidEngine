@@ -28,6 +28,7 @@ namespace Engine::Rendering
 #ifdef DEBUG
 		setupDebugMessenger();
 #endif
+		selectPhysicalDevice();
 	}
 
 	void VulkanGraphicApi::createInstance()
@@ -77,12 +78,76 @@ namespace Engine::Rendering
 		}
 	}
 
+	void VulkanGraphicApi::selectPhysicalDevice()
+	{
+		physicalDevice = getBestSuitablePhysicalDevice(instance);
+
+		if (physicalDevice == VK_NULL_HANDLE)
+		{
+			throw std::runtime_error("failed to find a suitable GPU!");
+		}
+
+#ifdef DEBUG
+		logPhysicalDeviceProperties(physicalDevice);
+#endif
+	}
+
 	void VulkanGraphicApi::cleanup()
 	{
 #ifdef DEBUG
 		DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 #endif
 		vkDestroyInstance(instance, nullptr);
+	}
+
+
+	int VulkanGraphicApi::getPhysicalDeviceSuitabilityScore(VkPhysicalDevice physicalDevice)
+	{
+		VkPhysicalDeviceProperties deviceProperties;
+		VkPhysicalDeviceFeatures deviceFeatures;
+		int score = 0;
+
+		vkGetPhysicalDeviceProperties(physicalDevice, &deviceProperties);
+		vkGetPhysicalDeviceFeatures(physicalDevice, &deviceFeatures);
+
+		if (!deviceFeatures.geometryShader) return score;
+
+		if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+		{
+			score += 1000;
+		}
+
+		score += deviceProperties.limits.maxImageDimension2D;
+
+		return score;
+	}
+
+	VkPhysicalDevice VulkanGraphicApi::getBestSuitablePhysicalDevice(VkInstance instance)
+	{
+		uint32_t deviceCount = 0;
+
+		vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+
+		if (deviceCount == 0) return VK_NULL_HANDLE;
+
+		std::vector<VkPhysicalDevice> devices(deviceCount);
+
+		vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+
+		int bestScore = INT_MIN;
+		VkPhysicalDevice bestDevice = VK_NULL_HANDLE;
+
+		for (const auto& device : devices)
+		{
+			int score = getPhysicalDeviceSuitabilityScore(device);
+
+			if (score < bestScore) continue;
+
+			bestScore = score;
+			bestDevice = device;
+		}
+
+		return bestDevice;
 	}
 
 
@@ -184,6 +249,18 @@ namespace Engine::Rendering
 		std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
 
 		return VK_FALSE;
+	}
+
+	void VulkanGraphicApi::logPhysicalDeviceProperties(VkPhysicalDevice phsicalDevice)
+	{
+		VkPhysicalDeviceProperties properties;
+
+		vkGetPhysicalDeviceProperties(phsicalDevice, &properties);
+
+		std::cout << "======================== GPU PROPERTIES ========================\n";
+		std::cout << "NAME : " << properties.deviceName << "\n";
+		std::cout << "DRIVER VERSION : " << properties.driverVersion << "\n";
+		std::cout << "================================================================\n";
 	}
 #endif
 }
