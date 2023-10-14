@@ -11,9 +11,9 @@
 
 namespace Engine::Rendering
 {
-	VulkanGraphicApi::VulkanGraphicApi()
+	VulkanGraphicApi::VulkanGraphicApi(GLFWwindow* window)
 	{
-		init();
+		init(window);
 	}
 
 	VulkanGraphicApi::~VulkanGraphicApi()
@@ -22,12 +22,13 @@ namespace Engine::Rendering
 	}
 
 
-	void VulkanGraphicApi::init()
+	void VulkanGraphicApi::init(GLFWwindow* window)
 	{
 		createInstance();
 #ifdef DEBUG
 		setupDebugMessenger();
 #endif
+		createSurface(window);
 		selectPhysicalDevice();
 		createLogicalDevice();
 	}
@@ -85,12 +86,21 @@ namespace Engine::Rendering
 		DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 #endif
 		vkDestroyDevice(logicalDevice, nullptr);
+		vkDestroySurfaceKHR(instance, surface, nullptr);
 		vkDestroyInstance(instance, nullptr);
+	}
+
+	void VulkanGraphicApi::createSurface(GLFWwindow* window)
+	{
+		if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) 
+		{
+			throw std::runtime_error("failed to create window surface!");
+		}
 	}
 
 	void VulkanGraphicApi::selectPhysicalDevice()
 	{
-		physicalDevice = getBestSuitablePhysicalDevice(instance);
+		physicalDevice = getBestSuitablePhysicalDevice(instance, surface);
 
 		if (physicalDevice == VK_NULL_HANDLE)
 		{
@@ -104,22 +114,30 @@ namespace Engine::Rendering
 
 	void VulkanGraphicApi::createLogicalDevice()
 	{
-		QueueFamilyIndices indices = getQueueFamilyIndices(physicalDevice);
-		VkDeviceQueueCreateInfo queueCreateInfo{};
+		QueueFamilyIndices indices = getQueueFamilyIndices(physicalDevice, surface);
+		std::set<uint32_t> indicesSet = indices.toSet();
+		std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
 		float queuePriority = 1.0f;
 
-		queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-		queueCreateInfo.queueFamilyIndex = indices.graphics.value();
-		queueCreateInfo.queueCount = 1;
-		queueCreateInfo.pQueuePriorities = &queuePriority;
+		for (uint32_t index : indicesSet)
+		{
+			VkDeviceQueueCreateInfo queueCreateInfo{};
+
+			queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+			queueCreateInfo.queueFamilyIndex = index;
+			queueCreateInfo.queueCount = 1;
+			queueCreateInfo.pQueuePriorities = &queuePriority;
+
+			queueCreateInfos.push_back(queueCreateInfo);
+		}
 
 		VkPhysicalDeviceFeatures deviceFeatures{};
 
 		VkDeviceCreateInfo createInfo{};
 
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-		createInfo.pQueueCreateInfos = &queueCreateInfo;
-		createInfo.queueCreateInfoCount = 1;
+		createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+		createInfo.pQueueCreateInfos = queueCreateInfos.data();
 		createInfo.pEnabledFeatures = &deviceFeatures;
 		createInfo.enabledExtensionCount = 0;
 #ifdef DEBUG
@@ -135,10 +153,11 @@ namespace Engine::Rendering
 		}
 
 		vkGetDeviceQueue(logicalDevice, indices.graphics.value(), 0, &graphicsQueue);
+		vkGetDeviceQueue(logicalDevice, indices.present.value(), 0, &presentQueue);
 	}
 
 
-	int VulkanGraphicApi::getPhysicalDeviceSuitabilityScore(VkPhysicalDevice physicalDevice)
+	int VulkanGraphicApi::getPhysicalDeviceSuitabilityScore(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface)
 	{
 		VkPhysicalDeviceProperties deviceProperties;
 		VkPhysicalDeviceFeatures deviceFeatures;
@@ -147,11 +166,11 @@ namespace Engine::Rendering
 		vkGetPhysicalDeviceProperties(physicalDevice, &deviceProperties);
 		vkGetPhysicalDeviceFeatures(physicalDevice, &deviceFeatures);
 
-		if (!deviceFeatures.geometryShader) return score;
+		if (!deviceFeatures.geometryShader) return INT_MIN;
 
-		QueueFamilyIndices queueFamilyIndices = getQueueFamilyIndices(physicalDevice);
+		QueueFamilyIndices queueFamilyIndices = getQueueFamilyIndices(physicalDevice, surface);
 
-		if (!queueFamilyIndices.isCompleted()) return score;
+		if (!queueFamilyIndices.isCompleted()) return INT_MIN;
 
 		if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
 		{
@@ -163,7 +182,7 @@ namespace Engine::Rendering
 		return score;
 	}
 
-	VkPhysicalDevice VulkanGraphicApi::getBestSuitablePhysicalDevice(VkInstance instance)
+	VkPhysicalDevice VulkanGraphicApi::getBestSuitablePhysicalDevice(VkInstance instance, VkSurfaceKHR surface)
 	{
 		uint32_t deviceCount = 0;
 
@@ -180,9 +199,9 @@ namespace Engine::Rendering
 
 		for (const auto& device : devices)
 		{
-			int score = getPhysicalDeviceSuitabilityScore(device);
+			int score = getPhysicalDeviceSuitabilityScore(device, surface);
 
-			if (score < bestScore) continue;
+			if (score <= bestScore) continue;
 
 			bestScore = score;
 			bestDevice = device;
@@ -191,7 +210,7 @@ namespace Engine::Rendering
 		return bestDevice;
 	}
 
-	VulkanGraphicApi::QueueFamilyIndices VulkanGraphicApi::getQueueFamilyIndices(VkPhysicalDevice physicalDevice)
+	VulkanGraphicApi::QueueFamilyIndices VulkanGraphicApi::getQueueFamilyIndices(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface)
 	{
 		QueueFamilyIndices indices;
 		uint32_t queueFamilyCount = 0;
@@ -206,9 +225,18 @@ namespace Engine::Rendering
 
 		for (const auto& queueFamily : queueFamilies) 
 		{
-			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) 
+			if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
 			{
 				indices.graphics = i;
+			}
+
+			VkBool32 presentSupport = false;
+
+			vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &presentSupport);
+
+			if (presentSupport)
+			{
+				indices.present = i;
 			}
 
 			i++;
@@ -313,7 +341,7 @@ namespace Engine::Rendering
 		const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
 		void* pUserData)
 	{
-		std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+		std::cerr << "[VALIDATION] " << pCallbackData->pMessage << std::endl;
 
 		return VK_FALSE;
 	}
@@ -324,10 +352,10 @@ namespace Engine::Rendering
 
 		vkGetPhysicalDeviceProperties(phsicalDevice, &properties);
 
-		std::cout << "======================== GPU PROPERTIES ========================\n";
-		std::cout << "NAME : " << properties.deviceName << "\n";
-		std::cout << "DRIVER VERSION : " << properties.driverVersion << "\n";
-		std::cout << "================================================================\n";
+		std::cout << "======================== GPU PROPERTIES ========================" << std::endl;
+		std::cout << "NAME : " << properties.deviceName << std::endl;
+		std::cout << "DRIVER VERSION : " << properties.driverVersion << std::endl;
+		std::cout << "================================================================" << std::endl;
 	}
 #endif
 }

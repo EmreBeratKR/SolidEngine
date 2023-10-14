@@ -5,9 +5,11 @@
 #endif
 
 #include "vulkan/vulkan.h"
+#include "GLFW/glfw3.h"
 
 #include <vector>
 #include <optional>
+#include <set>
 
 
 namespace Engine::Rendering
@@ -15,35 +17,48 @@ namespace Engine::Rendering
 	class VulkanGraphicApi
 	{
 	public:
-		VulkanGraphicApi();
+		VulkanGraphicApi(GLFWwindow* window);
 		~VulkanGraphicApi();
 
 	private:
 		struct QueueFamilyIndices
 		{
 			std::optional<uint32_t> graphics;
+			std::optional<uint32_t> present;
 
+
+			std::set<uint32_t> toSet()
+			{
+				return std::set<uint32_t>
+				{
+					graphics.value(),
+					present.value()
+				};
+			}
 
 			bool isCompleted()
 			{
-				return graphics.has_value();
+				return graphics.has_value() && present.has_value();
 			}
 		};
 
-		void init();
+		void init(GLFWwindow* window);
 		void createInstance();
 		void cleanup();
+		void createSurface(GLFWwindow* window);
 		void selectPhysicalDevice();
 		void createLogicalDevice();
 
-		static int getPhysicalDeviceSuitabilityScore(VkPhysicalDevice physicalDevice);
-		static VkPhysicalDevice getBestSuitablePhysicalDevice(VkInstance instance);
-		static QueueFamilyIndices getQueueFamilyIndices(VkPhysicalDevice physicalDevice);
+		static int getPhysicalDeviceSuitabilityScore(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
+		static VkPhysicalDevice getBestSuitablePhysicalDevice(VkInstance instance, VkSurfaceKHR surface);
+		static QueueFamilyIndices getQueueFamilyIndices(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
 
 		VkInstance instance;
 		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 		VkDevice logicalDevice;
 		VkQueue graphicsQueue;
+		VkQueue presentQueue;
+		VkSurfaceKHR surface;
 
 #ifdef DEBUG
 		void setupDebugMessenger();

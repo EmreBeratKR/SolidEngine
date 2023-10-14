@@ -12,9 +12,11 @@ namespace Engine
 		EngineWindow(int width, int height, std::string title);
 		~EngineWindow();
 
+		void run();
+		GLFWwindow* getGLFWWindow();
+
 	private:
 		void init();
-		void run();
 		bool shouldClose();
 		void close();
 

@@ -10,12 +10,27 @@ namespace Engine
 		: WIDTH(width), HEIGHT(height), TITLE(title)
 	{
 		init();
-		run();
 	}
 
 	EngineWindow::~EngineWindow()
 	{
 		close();
+	}
+
+
+	void EngineWindow::run()
+	{
+		while (!shouldClose())
+		{
+			glfwPollEvents();
+		}
+
+		close();
+	}
+
+	GLFWwindow* EngineWindow::getGLFWWindow()
+	{
+		return m_Window;
 	}
 
 
@@ -26,16 +41,6 @@ namespace Engine
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
 		m_Window = glfwCreateWindow(WIDTH, HEIGHT, TITLE.c_str(), nullptr, nullptr);
-	}
-
-	void EngineWindow::run()
-	{
-		while (!shouldClose())
-		{
-			glfwPollEvents();
-		}
-
-		close();
 	}
 
 	bool EngineWindow::shouldClose()
