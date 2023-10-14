@@ -36,9 +36,28 @@ namespace Engine::Rendering
 				};
 			}
 
+			uint32_t* toArray()
+			{
+				uint32_t arr[] = { graphics.value(), present.value() };
+
+				return arr;
+			}
+
 			bool isCompleted()
 			{
 				return graphics.has_value() && present.has_value();
+			}
+		};
+
+		struct SwapChainSupportDetails 
+		{
+			VkSurfaceCapabilitiesKHR capabilities;
+			std::vector<VkSurfaceFormatKHR> formats;
+			std::vector<VkPresentModeKHR> presentModes;
+
+			bool isEnough()
+			{
+				return !formats.empty() && !presentModes.empty();
 			}
 		};
 
@@ -48,10 +67,16 @@ namespace Engine::Rendering
 		void createSurface(GLFWwindow* window);
 		void selectPhysicalDevice();
 		void createLogicalDevice();
+		void createSwapChain(GLFWwindow* window);
 
-		static int getPhysicalDeviceSuitabilityScore(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
-		static VkPhysicalDevice getBestSuitablePhysicalDevice(VkInstance instance, VkSurfaceKHR surface);
+		static int getPhysicalDeviceSuitabilityScore(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, std::vector<const char*> deviceExtensions);
+		static VkPhysicalDevice getBestSuitablePhysicalDevice(VkInstance instance, VkSurfaceKHR surface, std::vector<const char*> deviceExtensions);
 		static QueueFamilyIndices getQueueFamilyIndices(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
+		static bool checkDeviceExtensionSupport(VkPhysicalDevice physicalDevice, std::vector<const char*> deviceExtensions);
+		static SwapChainSupportDetails getPhysicalDeviceSwapChainSupportDetails(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
+		static VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+		static VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+		static VkExtent2D chooseSwapExtent(GLFWwindow* window, const VkSurfaceCapabilitiesKHR& capabilities);
 
 		VkInstance instance;
 		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
@@ -59,6 +84,15 @@ namespace Engine::Rendering
 		VkQueue graphicsQueue;
 		VkQueue presentQueue;
 		VkSurfaceKHR surface;
+		VkSwapchainKHR swapChain;
+		std::vector<VkImage> swapChainImages;
+		VkFormat swapChainImageFormat;
+		VkExtent2D swapChainExtent;
+
+		const std::vector<const char*> deviceExtensions = 
+		{
+			VK_KHR_SWAPCHAIN_EXTENSION_NAME
+		};
 
 #ifdef DEBUG
 		void setupDebugMessenger();
