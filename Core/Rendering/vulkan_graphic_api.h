@@ -7,6 +7,7 @@
 #include "vulkan/vulkan.h"
 #include "GLFW/glfw3.h"
 
+#include <string>
 #include <vector>
 #include <optional>
 #include <set>
@@ -19,6 +20,8 @@ namespace Engine::Rendering
 	public:
 		VulkanGraphicApi(GLFWwindow* window);
 		~VulkanGraphicApi();
+
+		VkDevice getLogicalDevice();
 
 	private:
 		struct QueueFamilyIndices
@@ -69,6 +72,8 @@ namespace Engine::Rendering
 		void createLogicalDevice();
 		void createSwapChain(GLFWwindow* window);
 		void createImageViews();
+		void createRenderPipeline(const std::string& vertShaderFilePath, const std::string& fragShaderFilePath);
+		void createShaderStages();
 
 		static int getPhysicalDeviceSuitabilityScore(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, std::vector<const char*> deviceExtensions);
 		static VkPhysicalDevice getBestSuitablePhysicalDevice(VkInstance instance, VkSurfaceKHR surface, std::vector<const char*> deviceExtensions);
@@ -78,6 +83,8 @@ namespace Engine::Rendering
 		static VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
 		static VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 		static VkExtent2D chooseSwapExtent(GLFWwindow* window, const VkSurfaceCapabilitiesKHR& capabilities);
+		static std::vector<char> readShaderFile(const std::string& filePath);
+		static VkShaderModule createShaderModule(VkDevice logicalDevice, const std::vector<char>& code);
 
 		VkInstance instance;
 		VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
@@ -90,6 +97,8 @@ namespace Engine::Rendering
 		VkExtent2D swapChainExtent;
 		std::vector<VkImage> swapChainImages;
 		std::vector<VkImageView> swapChainImageViews;
+		VkShaderModule vertShaderModule;
+		VkShaderModule fragShaderModule;
 
 		const std::vector<const char*> deviceExtensions = 
 		{

@@ -5,6 +5,7 @@
 #include "vulkan_graphic_api.h"
 #include "GLFW/glfw3.h"
 
+#include <fstream>
 #include <algorithm>
 #include <stdexcept>
 #include <iostream>
@@ -23,6 +24,12 @@ namespace Engine::Rendering
 	}
 
 
+	VkDevice VulkanGraphicApi::getLogicalDevice()
+	{
+		return logicalDevice;
+	}
+
+
 	void VulkanGraphicApi::init(GLFWwindow* window)
 	{
 		createInstance();
@@ -34,6 +41,7 @@ namespace Engine::Rendering
 		createLogicalDevice();
 		createSwapChain(window);
 		createImageViews();
+		createRenderPipeline("Core/Shaders/shader.vert.spv", "Core/Shaders/shader.frag.spv");
 	}
 
 	void VulkanGraphicApi::createInstance()
@@ -85,18 +93,21 @@ namespace Engine::Rendering
 
 	void VulkanGraphicApi::cleanup()
 	{
-#ifdef DEBUG
-		DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
-#endif
-		vkDestroySwapchainKHR(logicalDevice, swapChain, nullptr);
-		vkDestroyDevice(logicalDevice, nullptr);
-		vkDestroySurfaceKHR(instance, surface, nullptr);
-		vkDestroyInstance(instance, nullptr);
-
-		for (auto imageView : swapChainImageViews) 
+		for (auto imageView : swapChainImageViews)
 		{
 			vkDestroyImageView(logicalDevice, imageView, nullptr);
 		}
+
+#ifdef DEBUG
+		DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+#endif
+		vkDestroyShaderModule(logicalDevice, vertShaderModule, nullptr);
+		vkDestroyShaderModule(logicalDevice, fragShaderModule, nullptr);
+		vkDestroySwapchainKHR(logicalDevice, swapChain, nullptr);
+		vkDestroyDevice(logicalDevice, nullptr);
+
+		vkDestroySurfaceKHR(instance, surface, nullptr);
+		vkDestroyInstance(instance, nullptr);
 	}
 
 	void VulkanGraphicApi::createSurface(GLFWwindow* window)
@@ -258,6 +269,36 @@ namespace Engine::Rendering
 			}
 
 		}
+	}
+
+	void VulkanGraphicApi::createRenderPipeline(const std::string& vertShaderFilePath, const std::string& fragShaderFilePath)
+	{
+		auto vertShaderFile = readShaderFile(vertShaderFilePath);
+		auto fragShaderFile = readShaderFile(fragShaderFilePath);
+
+		vertShaderModule = createShaderModule(logicalDevice, vertShaderFile);
+		fragShaderModule = createShaderModule(logicalDevice, fragShaderFile);
+
+		createShaderStages();
+	}
+
+	void VulkanGraphicApi::createShaderStages()
+	{
+		VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
+
+		vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+		vertShaderStageInfo.module = vertShaderModule;
+		vertShaderStageInfo.pName = "main";
+
+		VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
+
+		fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+		fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+		fragShaderStageInfo.module = fragShaderModule;
+		fragShaderStageInfo.pName = "main";
+
+		VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 	}
 
 
@@ -448,6 +489,42 @@ namespace Engine::Rendering
 		actualExtent.height = std::clamp(actualExtent.height, capabilities.minImageExtent.height, capabilities.maxImageExtent.height);
 
 		return actualExtent;
+	}
+
+	std::vector<char> VulkanGraphicApi::readShaderFile(const std::string& filePath)
+	{
+		std::ifstream fileStream(filePath, std::ios::ate | std::ios::binary);
+
+		if (!fileStream.is_open())
+		{
+			throw std::runtime_error("failed to open file at path => " + filePath);
+		}
+
+		size_t fileSize = static_cast<size_t>(fileStream.tellg());
+		std::vector<char> charBuffer(fileSize);
+
+		fileStream.seekg(0);
+		fileStream.read(charBuffer.data(), fileSize);
+		fileStream.close();
+
+		return charBuffer;
+	}
+
+	VkShaderModule VulkanGraphicApi::createShaderModule(VkDevice logicalDevice, const std::vector<char>& code)
+	{
+		VkShaderModule shaderModule;
+		VkShaderModuleCreateInfo createInfo{};
+
+		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+		createInfo.codeSize = code.size();
+		createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
+
+		if (vkCreateShaderModule(logicalDevice, &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
+		{
+			throw std::runtime_error("failed to create shader module!");
+		}
+
+		return shaderModule;
 	}
 
 #ifdef DEBUG
