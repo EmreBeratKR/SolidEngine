@@ -75,6 +75,7 @@ namespace Engine::Rendering
 		void createRenderPipeline(const std::string& vertShaderFilePath, const std::string& fragShaderFilePath);
 		void createShaderStages();
 		void createRenderPass();
+		void createFramebuffers();
 
 		static int getPhysicalDeviceSuitabilityScore(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, std::vector<const char*> deviceExtensions);
 		static VkPhysicalDevice getBestSuitablePhysicalDevice(VkInstance instance, VkSurfaceKHR surface, std::vector<const char*> deviceExtensions);
@@ -103,6 +104,7 @@ namespace Engine::Rendering
 		VkPipelineLayout pipelineLayout;
 		VkRenderPass renderPass;
 		VkPipeline graphicsPipeline;
+		std::vector<VkFramebuffer> swapChainFramebuffers;
 
 		const std::vector<const char*> deviceExtensions = 
 		{
