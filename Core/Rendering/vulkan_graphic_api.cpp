@@ -105,6 +105,7 @@ namespace Engine::Rendering
 		vkDestroyShaderModule(logicalDevice, vertShaderModule, nullptr);
 		vkDestroyShaderModule(logicalDevice, fragShaderModule, nullptr);
 		vkDestroySwapchainKHR(logicalDevice, swapChain, nullptr);
+		vkDestroyPipeline(logicalDevice, graphicsPipeline, nullptr);
 		vkDestroyPipelineLayout(logicalDevice, pipelineLayout, nullptr);
 		vkDestroyRenderPass(logicalDevice, renderPass, nullptr);
 		vkDestroyDevice(logicalDevice, nullptr);
@@ -283,7 +284,6 @@ namespace Engine::Rendering
 		fragShaderModule = createShaderModule(logicalDevice, fragShaderFile);
 
 		createShaderStages();
-		createFixedShaderStages();
 	}
 
 	void VulkanGraphicApi::createShaderStages()
@@ -302,11 +302,8 @@ namespace Engine::Rendering
 		fragShaderStageInfo.module = fragShaderModule;
 		fragShaderStageInfo.pName = "main";
 
-		VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
-	}
+		VkPipelineShaderStageCreateInfo stages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
-	void VulkanGraphicApi::createFixedShaderStages()
-	{
 		std::vector<VkDynamicState> dynamicStates = 
 		{
 			VK_DYNAMIC_STATE_VIEWPORT,
@@ -411,6 +408,30 @@ namespace Engine::Rendering
 		if (vkCreatePipelineLayout(logicalDevice, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) 
 		{
 			throw std::runtime_error("failed to create pipeline layout!");
+		}
+
+		VkGraphicsPipelineCreateInfo pipelineInfo{};
+
+		pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+		pipelineInfo.stageCount = 2;
+		pipelineInfo.pStages = stages;
+		pipelineInfo.pVertexInputState = &vertexInputInfo;
+		pipelineInfo.pInputAssemblyState = &inputAssembly;
+		pipelineInfo.pViewportState = &viewportState;
+		pipelineInfo.pRasterizationState = &rasterizer;
+		pipelineInfo.pMultisampleState = &multisampling;
+		pipelineInfo.pDepthStencilState = nullptr;
+		pipelineInfo.pColorBlendState = &colorBlending;
+		pipelineInfo.pDynamicState = &dynamicState;
+		pipelineInfo.layout = pipelineLayout;
+		pipelineInfo.renderPass = renderPass;
+		pipelineInfo.subpass = 0;
+		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+		pipelineInfo.basePipelineIndex = -1;
+
+		if (vkCreateGraphicsPipelines(logicalDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS) 
+		{
+			throw std::runtime_error("failed to create graphics pipeline!");
 		}
 	}
 
