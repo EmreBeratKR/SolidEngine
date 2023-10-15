@@ -21,7 +21,11 @@ namespace Engine::Rendering
 		VulkanGraphicApi(GLFWwindow* window);
 		~VulkanGraphicApi();
 
+		void drawFrame();
+		VkResult __stdcall waitIdle();
 		VkDevice getLogicalDevice();
+
+	protected:
 
 	private:
 		struct QueueFamilyIndices
@@ -79,6 +83,7 @@ namespace Engine::Rendering
 		void createCommandPool();
 		void createCommandBuffer();
 		void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+		void createSyncObjects();
 
 		static int getPhysicalDeviceSuitabilityScore(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, std::vector<const char*> deviceExtensions);
 		static VkPhysicalDevice getBestSuitablePhysicalDevice(VkInstance instance, VkSurfaceKHR surface, std::vector<const char*> deviceExtensions);
@@ -110,6 +115,9 @@ namespace Engine::Rendering
 		std::vector<VkFramebuffer> swapChainFramebuffers;
 		VkCommandPool commandPool;
 		VkCommandBuffer commandBuffer;
+		VkSemaphore imageAvailableSemaphore;
+		VkSemaphore renderFinishedSemaphore;
+		VkFence inFlightFence;
 
 		const std::vector<const char*> deviceExtensions = 
 		{

@@ -23,9 +23,16 @@ namespace Engine
 		while (!shouldClose())
 		{
 			glfwPollEvents();
+			m_GraphicApi->drawFrame();
 		}
 
+		m_GraphicApi->waitIdle();
 		close();
+	}
+
+	void EngineWindow::setGraphicApi(Rendering::VulkanGraphicApi* graphicApi)
+	{
+		m_GraphicApi = graphicApi;
 	}
 
 	GLFWwindow* EngineWindow::getGLFWWindow()

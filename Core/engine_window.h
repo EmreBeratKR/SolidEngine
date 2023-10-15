@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Rendering/vulkan_graphic_api.h"
+
 #include <string>
 #include <GLFW/glfw3.h>
 
@@ -13,6 +15,7 @@ namespace Engine
 		~EngineWindow();
 
 		void run();
+		void setGraphicApi(Rendering::VulkanGraphicApi* graphicApi);
 		GLFWwindow* getGLFWWindow();
 
 	private:
@@ -25,5 +28,6 @@ namespace Engine
 		const std::string TITLE;
 
 		GLFWwindow* m_Window;
+		Rendering::VulkanGraphicApi* m_GraphicApi;
 	};
 }

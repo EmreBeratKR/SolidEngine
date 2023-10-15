@@ -16,6 +16,9 @@ namespace Engine::Rendering
 	VulkanGraphicApi::VulkanGraphicApi(GLFWwindow* window)
 	{
 		init(window);
+#ifdef DEBUG
+		logPhysicalDeviceProperties(physicalDevice);
+#endif
 	}
 
 	VulkanGraphicApi::~VulkanGraphicApi()
@@ -27,6 +30,60 @@ namespace Engine::Rendering
 	VkDevice VulkanGraphicApi::getLogicalDevice()
 	{
 		return logicalDevice;
+	}
+
+
+	void VulkanGraphicApi::drawFrame()
+	{
+		vkWaitForFences(logicalDevice, 1, &inFlightFence, VK_TRUE, UINT64_MAX);
+		vkResetFences(logicalDevice, 1, &inFlightFence);
+
+		uint32_t imageIndex;
+
+		vkAcquireNextImageKHR(logicalDevice, swapChain, UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+		vkResetCommandBuffer(commandBuffer, 0);
+		recordCommandBuffer(commandBuffer, imageIndex);
+
+		VkSubmitInfo submitInfo{};
+
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+		VkSemaphore waitSemaphores[] = { imageAvailableSemaphore };
+
+		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+		submitInfo.waitSemaphoreCount = 1;
+		submitInfo.pWaitSemaphores = waitSemaphores;
+		submitInfo.pWaitDstStageMask = waitStages;
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &commandBuffer;
+
+		VkSemaphore signalSemaphores[] = { renderFinishedSemaphore };
+
+		submitInfo.signalSemaphoreCount = 1;
+		submitInfo.pSignalSemaphores = signalSemaphores;
+
+		if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFence) != VK_SUCCESS) 
+		{
+			throw std::runtime_error("failed to submit draw command buffer!");
+		}
+
+		VkPresentInfoKHR presentInfo{};
+		VkSwapchainKHR swapChains[] = { swapChain };
+
+		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+		presentInfo.waitSemaphoreCount = 1;
+		presentInfo.pWaitSemaphores = signalSemaphores;
+		presentInfo.swapchainCount = 1;
+		presentInfo.pSwapchains = swapChains;
+		presentInfo.pImageIndices = &imageIndex;
+		presentInfo.pResults = nullptr;
+
+		vkQueuePresentKHR(presentQueue, &presentInfo);
+	}
+
+	VkResult __stdcall VulkanGraphicApi::waitIdle()
+	{
+		return vkDeviceWaitIdle(logicalDevice);
 	}
 
 
@@ -46,6 +103,7 @@ namespace Engine::Rendering
 		createFramebuffers();
 		createCommandPool();
 		createCommandBuffer();
+		createSyncObjects();
 	}
 
 	void VulkanGraphicApi::createInstance()
@@ -70,6 +128,11 @@ namespace Engine::Rendering
 		createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 		createInfo.pApplicationInfo = &appInfo;
 
+		auto extensions = getRequiredExtensions();
+
+		createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+		createInfo.ppEnabledExtensionNames = extensions.data();
+
 #ifdef DEBUG
 		VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
 
@@ -77,11 +140,6 @@ namespace Engine::Rendering
 		createInfo.ppEnabledLayerNames = validationLayers.data();
 		populateDebugMessengerCreateInfo(debugCreateInfo);
 		createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo;
-
-		auto extensions = getRequiredExtensions();
-
-		createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
-		createInfo.ppEnabledExtensionNames = extensions.data();
 #else
 		createInfo.enabledLayerCount = 0;
 		createInfo.pNext = nullptr;
@@ -117,6 +175,9 @@ namespace Engine::Rendering
 		vkDestroyPipelineLayout(logicalDevice, pipelineLayout, nullptr);
 		vkDestroyRenderPass(logicalDevice, renderPass, nullptr);
 		vkDestroyCommandPool(logicalDevice, commandPool, nullptr);
+		vkDestroySemaphore(logicalDevice, imageAvailableSemaphore, nullptr);
+		vkDestroySemaphore(logicalDevice, renderFinishedSemaphore, nullptr);
+		vkDestroyFence(logicalDevice, inFlightFence, nullptr);
 		vkDestroyDevice(logicalDevice, nullptr);
 
 		vkDestroySurfaceKHR(instance, surface, nullptr);
@@ -139,10 +200,6 @@ namespace Engine::Rendering
 		{
 			throw std::runtime_error("failed to find a suitable GPU!");
 		}
-
-#ifdef DEBUG
-		logPhysicalDeviceProperties(physicalDevice);
-#endif
 	}
 
 	void VulkanGraphicApi::createLogicalDevice()
@@ -165,7 +222,6 @@ namespace Engine::Rendering
 		}
 
 		VkPhysicalDeviceFeatures deviceFeatures{};
-
 		VkDeviceCreateInfo createInfo{};
 
 		createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
@@ -313,18 +369,6 @@ namespace Engine::Rendering
 
 		VkPipelineShaderStageCreateInfo stages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
-		std::vector<VkDynamicState> dynamicStates = 
-		{
-			VK_DYNAMIC_STATE_VIEWPORT,
-			VK_DYNAMIC_STATE_SCISSOR
-		};
-
-		VkPipelineDynamicStateCreateInfo dynamicState{};
-
-		dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
-		dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
-		dynamicState.pDynamicStates = dynamicStates.data();
-
 		VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 
 		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -338,20 +382,6 @@ namespace Engine::Rendering
 		inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 		inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 		inputAssembly.primitiveRestartEnable = VK_FALSE;
-
-		VkViewport viewport{};
-
-		viewport.x = 0.0f;
-		viewport.y = 0.0f;
-		viewport.width = (float)swapChainExtent.width;
-		viewport.height = (float)swapChainExtent.height;
-		viewport.minDepth = 0.0f;
-		viewport.maxDepth = 1.0f;
-
-		VkRect2D scissor{};
-
-		scissor.offset = { 0, 0 };
-		scissor.extent = swapChainExtent;
 
 		VkPipelineViewportStateCreateInfo viewportState{};
 
@@ -405,6 +435,18 @@ namespace Engine::Rendering
 		colorBlending.blendConstants[2] = 0.0f;
 		colorBlending.blendConstants[0] = 0.0f;
 		colorBlending.blendConstants[3] = 0.0f;
+
+		std::vector<VkDynamicState> dynamicStates = 
+		{
+			VK_DYNAMIC_STATE_VIEWPORT,
+			VK_DYNAMIC_STATE_SCISSOR
+		};
+
+		VkPipelineDynamicStateCreateInfo dynamicState{};
+
+		dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+		dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
+		dynamicState.pDynamicStates = dynamicStates.data();
 
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 
@@ -468,6 +510,15 @@ namespace Engine::Rendering
 		subpass.colorAttachmentCount = 1;
 		subpass.pColorAttachments = &colorAttachmentRef;
 
+		VkSubpassDependency dependency{};
+
+		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+		dependency.dstSubpass = 0;
+		dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		dependency.srcAccessMask = 0;
+		dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
 		VkRenderPassCreateInfo renderPassInfo{};
 
 		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
@@ -475,6 +526,8 @@ namespace Engine::Rendering
 		renderPassInfo.pAttachments = &colorAttachment;
 		renderPassInfo.subpassCount = 1;
 		renderPassInfo.pSubpasses = &subpass;
+		renderPassInfo.dependencyCount = 1;
+		renderPassInfo.pDependencies = &dependency;
 
 		if (vkCreateRenderPass(logicalDevice, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) 
 		{
@@ -592,6 +645,25 @@ namespace Engine::Rendering
 		if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) 
 		{
 			throw std::runtime_error("failed to record command buffer!");
+		}
+	}
+
+	void VulkanGraphicApi::createSyncObjects()
+	{
+		VkSemaphoreCreateInfo semaphoreInfo{};
+
+		semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+		VkFenceCreateInfo fenceInfo{};
+
+		fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+		fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+		if (vkCreateSemaphore(logicalDevice, &semaphoreInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS ||
+			vkCreateSemaphore(logicalDevice, &semaphoreInfo, nullptr, &renderFinishedSemaphore) != VK_SUCCESS ||
+			vkCreateFence(logicalDevice, &fenceInfo, nullptr, &inFlightFence) != VK_SUCCESS) 
+		{
+			throw std::runtime_error("failed to create semaphores!");
 		}
 	}
 
