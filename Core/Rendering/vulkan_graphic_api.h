@@ -76,6 +76,9 @@ namespace Engine::Rendering
 		void createShaderStages();
 		void createRenderPass();
 		void createFramebuffers();
+		void createCommandPool();
+		void createCommandBuffer();
+		void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 
 		static int getPhysicalDeviceSuitabilityScore(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface, std::vector<const char*> deviceExtensions);
 		static VkPhysicalDevice getBestSuitablePhysicalDevice(VkInstance instance, VkSurfaceKHR surface, std::vector<const char*> deviceExtensions);
@@ -105,6 +108,8 @@ namespace Engine::Rendering
 		VkRenderPass renderPass;
 		VkPipeline graphicsPipeline;
 		std::vector<VkFramebuffer> swapChainFramebuffers;
+		VkCommandPool commandPool;
+		VkCommandBuffer commandBuffer;
 
 		const std::vector<const char*> deviceExtensions = 
 		{
