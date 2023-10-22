@@ -35,6 +35,12 @@
     <ClInclude Include="Common\debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Core\engine_window.fwd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Rendering\vulkan_graphic_engine.fwd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Core\shader_compiler.bat">

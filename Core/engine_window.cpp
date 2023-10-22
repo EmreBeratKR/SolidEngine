@@ -37,14 +37,25 @@ namespace Engine
 		return m_Window;
 	}
 
+	bool EngineWindow::getFrameBufferResized()
+	{
+		return framebufferResized;
+	}
+
+	void EngineWindow::setFrameBufferResized(bool value)
+	{
+		framebufferResized = value;
+	}
+
 
 	void EngineWindow::init()
 	{
 		glfwInit();
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
 		m_Window = glfwCreateWindow(WIDTH, HEIGHT, TITLE.c_str(), nullptr, nullptr);
+		glfwSetWindowUserPointer(m_Window, this);
+		glfwSetFramebufferSizeCallback(m_Window, framebufferResizeCallback);
 	}
 
 	bool EngineWindow::shouldClose()
@@ -56,5 +67,13 @@ namespace Engine
 	{
 		glfwDestroyWindow(m_Window);
 		glfwTerminate();
+	}
+
+
+	void EngineWindow::framebufferResizeCallback(GLFWwindow* window, int width, int height)
+	{
+		auto app = reinterpret_cast<EngineWindow*>(glfwGetWindowUserPointer(window));
+
+		app->framebufferResized = true;
 	}
 }

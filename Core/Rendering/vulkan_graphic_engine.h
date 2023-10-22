@@ -3,6 +3,8 @@
 #define GLFW_INCLUDE_VULKAN
 
 #include "Common/debug.h"
+#include "Core/engine_window.fwd.h"
+#include "Core/engine_window.h"
 
 #include <GLFW/glfw3.h>
 #include <vector>
@@ -49,6 +51,7 @@ namespace Engine::Rendering
         };
 
     private:
+        EngineWindow* engineWindow;
         GLFWwindow* window;
 
         VkInstance instance;
@@ -72,14 +75,16 @@ namespace Engine::Rendering
         VkPipeline graphicsPipeline;
 
         VkCommandPool commandPool;
-        VkCommandBuffer commandBuffer;
+        std::vector<VkCommandBuffer> commandBuffers;
 
-        VkSemaphore imageAvailableSemaphore;
-        VkSemaphore renderFinishedSemaphore;
-        VkFence inFlightFence;
+        std::vector<VkSemaphore> imageAvailableSemaphores;
+        std::vector<VkSemaphore> renderFinishedSemaphores;
+        std::vector<VkFence> inFlightFences;
+
+        uint32_t currentFrame = 0;
 
     private:
-        void init(GLFWwindow* window);
+        void init(EngineWindow* engineWindow);
         void cleanup();
         void createInstance();
         void createSurface();
@@ -94,6 +99,8 @@ namespace Engine::Rendering
         void createCommandBuffer();
         void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
         void createSyncObjects();
+        void recreateSwapChain();
+        void cleanupSwapChain();
         VkShaderModule createShaderModule(const std::vector<char>& code);
         VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
         VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
@@ -108,7 +115,7 @@ namespace Engine::Rendering
         static std::vector<char> readFile(const std::string& filename);
 
     public:
-        VulkanGraphicEngine(GLFWwindow* window);
+        VulkanGraphicEngine(EngineWindow* engineWindow);
         ~VulkanGraphicEngine();
 
     public:

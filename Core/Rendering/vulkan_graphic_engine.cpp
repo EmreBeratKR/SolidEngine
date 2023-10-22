@@ -3,9 +3,9 @@
 
 namespace Engine::Rendering
 {
-        VulkanGraphicEngine::VulkanGraphicEngine(GLFWwindow* window)
+        VulkanGraphicEngine::VulkanGraphicEngine(EngineWindow* engineWindow)
         {
-            init(window);
+            init(engineWindow);
         }
 
         VulkanGraphicEngine::~VulkanGraphicEngine()
@@ -16,32 +16,44 @@ namespace Engine::Rendering
 
         void VulkanGraphicEngine::drawFrame()
         {
-            vkWaitForFences(logicalDevice, 1, &inFlightFence, VK_TRUE, UINT64_MAX);
-            vkResetFences(logicalDevice, 1, &inFlightFence);
+            vkWaitForFences(logicalDevice, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
 
             uint32_t imageIndex;
-            vkAcquireNextImageKHR(logicalDevice, swapChain, UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+            VkResult result = vkAcquireNextImageKHR(logicalDevice, swapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
 
-            vkResetCommandBuffer(commandBuffer, 0);
-            recordCommandBuffer(commandBuffer, imageIndex);
+            if (result == VK_ERROR_OUT_OF_DATE_KHR) 
+            {
+                recreateSwapChain();
+                return;
+            }
+
+            else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) 
+            {
+                throw std::runtime_error("failed to acquire swap chain image!");
+            }
+
+            vkResetFences(logicalDevice, 1, &inFlightFences[currentFrame]);
+
+            vkResetCommandBuffer(commandBuffers[currentFrame], 0);
+            recordCommandBuffer(commandBuffers[currentFrame], imageIndex);
 
             VkSubmitInfo submitInfo{};
             submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-            VkSemaphore waitSemaphores[] = { imageAvailableSemaphore };
+            VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame]};
             VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
             submitInfo.waitSemaphoreCount = 1;
             submitInfo.pWaitSemaphores = waitSemaphores;
             submitInfo.pWaitDstStageMask = waitStages;
 
             submitInfo.commandBufferCount = 1;
-            submitInfo.pCommandBuffers = &commandBuffer;
+            submitInfo.pCommandBuffers = &commandBuffers[currentFrame];
 
-            VkSemaphore signalSemaphores[] = { renderFinishedSemaphore };
+            VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame]};
             submitInfo.signalSemaphoreCount = 1;
             submitInfo.pSignalSemaphores = signalSemaphores;
 
-            if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFence) != VK_SUCCESS)
+            if (vkQueueSubmit(graphicsQueue, 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS)
             {
                 throw std::runtime_error("failed to submit draw command buffer!");
             }
@@ -58,7 +70,20 @@ namespace Engine::Rendering
 
             presentInfo.pImageIndices = &imageIndex;
 
-            vkQueuePresentKHR(presentQueue, &presentInfo);
+            result = vkQueuePresentKHR(presentQueue, &presentInfo);
+
+            if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || engineWindow->getFrameBufferResized())
+            {
+                engineWindow->setFrameBufferResized(false);
+                recreateSwapChain();
+            }
+
+            else if (result != VK_SUCCESS) 
+            {
+                throw std::runtime_error("failed to present swap chain image!");
+            }
+
+            currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
         }
 
         VkResult __stdcall VulkanGraphicEngine::waitIdle()
@@ -67,9 +92,10 @@ namespace Engine::Rendering
         }
 
 
-        void VulkanGraphicEngine::init(GLFWwindow* window)
+        void VulkanGraphicEngine::init(EngineWindow* engineWindow)
         {
-            this->window = window;
+            this->engineWindow = engineWindow;
+            this->window = engineWindow->getGLFWWindow();
 
             createInstance();
 #ifdef DEBUG
@@ -93,27 +119,21 @@ namespace Engine::Rendering
 
         void VulkanGraphicEngine::cleanup()
         {
-            vkDestroySemaphore(logicalDevice, renderFinishedSemaphore, nullptr);
-            vkDestroySemaphore(logicalDevice, imageAvailableSemaphore, nullptr);
-            vkDestroyFence(logicalDevice, inFlightFence, nullptr);
+            cleanupSwapChain();
+
+            for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+            {
+                vkDestroySemaphore(logicalDevice, renderFinishedSemaphores[i], nullptr);
+                vkDestroySemaphore(logicalDevice, imageAvailableSemaphores[i], nullptr);
+                vkDestroyFence(logicalDevice, inFlightFences[i], nullptr);
+            }          
 
             vkDestroyCommandPool(logicalDevice, commandPool, nullptr);
-
-            for (auto framebuffer : swapChainFramebuffers)
-            {
-                vkDestroyFramebuffer(logicalDevice, framebuffer, nullptr);
-            }
 
             vkDestroyPipeline(logicalDevice, graphicsPipeline, nullptr);
             vkDestroyPipelineLayout(logicalDevice, pipelineLayout, nullptr);
             vkDestroyRenderPass(logicalDevice, renderPass, nullptr);
 
-            for (auto imageView : swapChainImageViews)
-            {
-                vkDestroyImageView(logicalDevice, imageView, nullptr);
-            }
-
-            vkDestroySwapchainKHR(logicalDevice, swapChain, nullptr);
             vkDestroyDevice(logicalDevice, nullptr);
 
 #ifdef DEBUG
@@ -535,13 +555,15 @@ namespace Engine::Rendering
 
         void VulkanGraphicEngine::createCommandBuffer()
         {
+            commandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+
             VkCommandBufferAllocateInfo allocInfo{};
             allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
             allocInfo.commandPool = commandPool;
             allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-            allocInfo.commandBufferCount = 1;
+            allocInfo.commandBufferCount = (uint32_t)commandBuffers.size();;
 
-            if (vkAllocateCommandBuffers(logicalDevice, &allocInfo, &commandBuffer) != VK_SUCCESS)
+            if (vkAllocateCommandBuffers(logicalDevice, &allocInfo, commandBuffers.data()) != VK_SUCCESS)
             {
                 throw std::runtime_error("failed to allocate command buffers!");
             }
@@ -598,6 +620,10 @@ namespace Engine::Rendering
 
         void VulkanGraphicEngine::createSyncObjects()
         {
+            imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+            renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
+            inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
+
             VkSemaphoreCreateInfo semaphoreInfo{};
             semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
@@ -605,13 +631,49 @@ namespace Engine::Rendering
             fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
             fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-            if (vkCreateSemaphore(logicalDevice, &semaphoreInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS ||
-                vkCreateSemaphore(logicalDevice, &semaphoreInfo, nullptr, &renderFinishedSemaphore) != VK_SUCCESS ||
-                vkCreateFence(logicalDevice, &fenceInfo, nullptr, &inFlightFence) != VK_SUCCESS)
+            for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
             {
-                throw std::runtime_error("failed to create synchronization objects for a frame!");
+                if (vkCreateSemaphore(logicalDevice, &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) != VK_SUCCESS ||
+                    vkCreateSemaphore(logicalDevice, &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) != VK_SUCCESS ||
+                    vkCreateFence(logicalDevice, &fenceInfo, nullptr, &inFlightFences[i]) != VK_SUCCESS)
+                {
+                    throw std::runtime_error("failed to create synchronization objects for a frame!");
+                }
+            }
+        }
+
+        void VulkanGraphicEngine::recreateSwapChain()
+        {
+            int width = 0, height = 0;
+
+            glfwGetFramebufferSize(window, &width, &height);
+
+            while (width == 0 || height == 0) 
+            {
+                glfwGetFramebufferSize(window, &width, &height);
+                glfwWaitEvents();
             }
 
+            waitIdle();
+            cleanupSwapChain();
+            createSwapChain();
+            createImageViews();
+            createFramebuffers();
+        }
+
+        void VulkanGraphicEngine::cleanupSwapChain()
+        {
+            for (auto framebuffer : swapChainFramebuffers)
+            {
+                vkDestroyFramebuffer(logicalDevice, framebuffer, nullptr);
+            }
+
+            for (auto imageView : swapChainImageViews)
+            {
+                vkDestroyImageView(logicalDevice, imageView, nullptr);
+            }
+
+            vkDestroySwapchainKHR(logicalDevice, swapChain, nullptr);
         }
 
         VkShaderModule VulkanGraphicEngine::createShaderModule(const std::vector<char>& code)
