@@ -5,6 +5,7 @@
 #include "Common/debug.h"
 #include "Core/engine_window.fwd.h"
 #include "Core/engine_window.h"
+#include "vertex.h"
 
 #include <GLFW/glfw3.h>
 #include <vector>
@@ -20,6 +21,13 @@ namespace Engine::Rendering
 {
 	class VulkanGraphicEngine
 	{
+        const std::vector<Vertex> vertices = 
+        {
+            {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+            {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+            {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+        };
+
         const int MAX_FRAMES_IN_FLIGHT = 2;
 
         const std::vector<const char*> validationLayers =
@@ -81,6 +89,9 @@ namespace Engine::Rendering
         std::vector<VkSemaphore> renderFinishedSemaphores;
         std::vector<VkFence> inFlightFences;
 
+        VkBuffer vertexBuffer;
+        VkDeviceMemory vertexBufferMemory;
+
         uint32_t currentFrame = 0;
 
     private:
@@ -101,6 +112,9 @@ namespace Engine::Rendering
         void createSyncObjects();
         void recreateSwapChain();
         void cleanupSwapChain();
+        void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+        void createVertexBuffer();
+        void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
         VkShaderModule createShaderModule(const std::vector<char>& code);
         VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
         VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
@@ -111,6 +125,7 @@ namespace Engine::Rendering
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
         std::vector<const char*> getRequiredExtensions();
         bool checkValidationLayerSupport();
+        uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
         static std::vector<char> readFile(const std::string& filename);
 
