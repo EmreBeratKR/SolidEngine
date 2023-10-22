@@ -23,9 +23,15 @@ namespace Engine::Rendering
 	{
         const std::vector<Vertex> vertices = 
         {
-            {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+            {{-0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+            {{0.5f, -0.5f}, {1.0f, 1.0f, 0.0f}},
             {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-            {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+            {{-0.5f, 0.5f}, {0.0f, 0.0f, 0.0f}}
+        };
+
+        const std::vector<uint16_t> indices = 
+        {
+            0, 1, 2, 2, 3, 0
         };
 
         const int MAX_FRAMES_IN_FLIGHT = 2;
@@ -92,6 +98,9 @@ namespace Engine::Rendering
         VkBuffer vertexBuffer;
         VkDeviceMemory vertexBufferMemory;
 
+        VkBuffer indexBuffer;
+        VkDeviceMemory indexBufferMemory;
+
         uint32_t currentFrame = 0;
 
     private:
@@ -115,6 +124,7 @@ namespace Engine::Rendering
         void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
         void createVertexBuffer();
         void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+        void createIndexBuffer();
         VkShaderModule createShaderModule(const std::vector<char>& code);
         VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
         VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
