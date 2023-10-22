@@ -24,6 +24,9 @@
     <ClCompile Include="Core\Rendering\vulkan_graphic_engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Rendering\vertex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\engine_window.h">
@@ -39,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Core\Rendering\vulkan_graphic_engine.fwd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Rendering\vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
