@@ -135,13 +135,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Rendering\vulkan_graphic_engine.cpp" />
     <ClCompile Include="Core\main.cpp" />
     <ClCompile Include="Core\engine_window.cpp" />
-    <ClCompile Include="Core\Rendering\vulkan_graphic_api.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common\debug.h" />
     <ClInclude Include="Core\engine_window.h" />
-    <ClInclude Include="Core\Rendering\vulkan_graphic_api.h" />
+    <ClInclude Include="Core\Rendering\vulkan_graphic_engine.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Core\Shaders\shader.frag" />

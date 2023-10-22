@@ -1,8 +1,5 @@
 #include "engine_window.h"
 
-#include <string>
-#include <GLFW/glfw3.h>
-
 
 namespace Engine
 {
@@ -23,16 +20,16 @@ namespace Engine
 		while (!shouldClose())
 		{
 			glfwPollEvents();
-			m_GraphicApi->drawFrame();
+			m_GraphicEngine->drawFrame();
 		}
 
-		m_GraphicApi->waitIdle();
+		m_GraphicEngine->waitIdle();
 		close();
 	}
 
-	void EngineWindow::setGraphicApi(Rendering::VulkanGraphicApi* graphicApi)
+	void EngineWindow::setGraphicApi(Rendering::VulkanGraphicEngine* graphicEngine)
 	{
-		m_GraphicApi = graphicApi;
+		m_GraphicEngine = graphicEngine;
 	}
 
 	GLFWwindow* EngineWindow::getGLFWWindow()
