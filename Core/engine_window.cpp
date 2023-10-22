@@ -27,7 +27,7 @@ namespace Engine
 		close();
 	}
 
-	void EngineWindow::setGraphicApi(Rendering::VulkanGraphicEngine* graphicEngine)
+	void EngineWindow::setGraphicEngine(Rendering::VulkanGraphicEngine* graphicEngine)
 	{
 		m_GraphicEngine = graphicEngine;
 	}

@@ -29,7 +29,7 @@ namespace Engine
 
 	public:
 		void run();
-		void setGraphicApi(Rendering::VulkanGraphicEngine* graphicApi);
+		void setGraphicEngine(Rendering::VulkanGraphicEngine* graphicApi);
 		GLFWwindow* getGLFWWindow();
 	};
 }
