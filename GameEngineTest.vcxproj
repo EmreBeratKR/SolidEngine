@@ -160,6 +160,7 @@
     <ClInclude Include="src\common\debug.h" />
     <ClInclude Include="src\core\engine_window.fwd.h" />
     <ClInclude Include="src\core\engine_window.h" />
+    <ClInclude Include="src\core\rendering\uniform_buffer_object.h" />
     <ClInclude Include="src\core\rendering\vertex.h" />
     <ClInclude Include="src\core\rendering\vulkan_graphic_engine.fwd.h" />
     <ClInclude Include="src\core\rendering\vulkan_graphic_engine.h" />

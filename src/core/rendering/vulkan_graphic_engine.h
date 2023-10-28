@@ -101,6 +101,14 @@ namespace Engine::Rendering
         VkBuffer indexBuffer;
         VkDeviceMemory indexBufferMemory;
 
+        VkDescriptorSetLayout descriptorSetLayout;
+        VkDescriptorPool descriptorPool;
+        std::vector<VkDescriptorSet> descriptorSets;
+
+        std::vector<VkBuffer> uniformBuffers;
+        std::vector<VkDeviceMemory> uniformBuffersMemory;
+        std::vector<void*> uniformBuffersMapped;
+
         uint32_t currentFrame = 0;
 
     private:
@@ -125,6 +133,11 @@ namespace Engine::Rendering
         void createVertexBuffer();
         void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
         void createIndexBuffer();
+        void createDescriptorSetLayout();
+        void createUniformBuffers();
+        void updateUniformBuffer(uint32_t currentImage);
+        void createDescriptorPool();
+        void createDescriptorSets();
         VkShaderModule createShaderModule(const std::vector<char>& code);
         VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
         VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
