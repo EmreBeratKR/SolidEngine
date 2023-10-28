@@ -52,13 +52,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\core\shaders\shader.frag">
+    <None Include="resources\shaders\glsl\shader.frag">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="src\core\shaders\shader.vert">
+    <None Include="resources\shaders\glsl\shader.vert">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="src\core\shader_compiler.bat">
+    <None Include="bats\shader_compiler.bat">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
