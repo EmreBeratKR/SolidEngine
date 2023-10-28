@@ -2,9 +2,9 @@
 
 #define GLFW_INCLUDE_VULKAN
 
-#include "Common/debug.h"
-#include "Core/engine_window.fwd.h"
-#include "Core/engine_window.h"
+#include "src/common/debug.h"
+#include "src/core/engine_window.fwd.h"
+#include "src/core/engine_window.h"
 #include "vertex.h"
 
 #include <GLFW/glfw3.h>

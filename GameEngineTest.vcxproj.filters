@@ -15,48 +15,48 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Core\main.cpp">
+    <ClCompile Include="src\core\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\engine_window.cpp">
+    <ClCompile Include="src\core\engine_window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Rendering\vulkan_graphic_engine.cpp">
+    <ClCompile Include="src\core\rendering\vulkan_graphic_engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Rendering\vertex.cpp">
+    <ClCompile Include="src\core\rendering\vertex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Core\engine_window.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Rendering\vulkan_graphic_engine.h">
+    <ClInclude Include="src\core\rendering\vulkan_graphic_engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Common\debug.h">
+    <ClInclude Include="src\common\debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\engine_window.fwd.h">
+    <ClInclude Include="src\core\engine_window.fwd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Rendering\vulkan_graphic_engine.fwd.h">
+    <ClInclude Include="src\core\rendering\vulkan_graphic_engine.fwd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Rendering\vertex.h">
+    <ClInclude Include="src\core\rendering\vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\engine_window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Core\shader_compiler.bat">
-      <Filter>Source Files</Filter>
+    <None Include="src\core\shaders\shader.frag">
+      <Filter>Resource Files</Filter>
     </None>
-    <None Include="Core\Shaders\shader.frag">
-      <Filter>Source Files</Filter>
+    <None Include="src\core\shaders\shader.vert">
+      <Filter>Resource Files</Filter>
     </None>
-    <None Include="Core\Shaders\shader.vert">
-      <Filter>Source Files</Filter>
+    <None Include="src\core\shader_compiler.bat">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
 </Project>

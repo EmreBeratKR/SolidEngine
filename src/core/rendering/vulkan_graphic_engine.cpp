@@ -409,8 +409,8 @@ namespace Engine::Rendering
 
         void VulkanGraphicEngine::createGraphicsPipeline()
         {
-            auto vertShaderCode = readFile("Core/Shaders/shader.vert.spv");
-            auto fragShaderCode = readFile("Core/Shaders/shader.frag.spv");
+            auto vertShaderCode = readFile("src/core/shaders/shader.vert.spv");
+            auto fragShaderCode = readFile("src/core/shaders/shader.frag.spv");
 
             VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
             VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);

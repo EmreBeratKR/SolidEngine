@@ -70,6 +70,22 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -135,23 +151,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Core\Rendering\vertex.cpp" />
-    <ClCompile Include="Core\Rendering\vulkan_graphic_engine.cpp" />
-    <ClCompile Include="Core\main.cpp" />
-    <ClCompile Include="Core\engine_window.cpp" />
+    <ClCompile Include="src\core\rendering\vertex.cpp" />
+    <ClCompile Include="src\core\rendering\vulkan_graphic_engine.cpp" />
+    <ClCompile Include="src\core\main.cpp" />
+    <ClCompile Include="src\core\engine_window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Common\debug.h" />
-    <ClInclude Include="Core\engine_window.fwd.h" />
-    <ClInclude Include="Core\engine_window.h" />
-    <ClInclude Include="Core\Rendering\vertex.h" />
-    <ClInclude Include="Core\Rendering\vulkan_graphic_engine.fwd.h" />
-    <ClInclude Include="Core\Rendering\vulkan_graphic_engine.h" />
+    <ClInclude Include="src\common\debug.h" />
+    <ClInclude Include="src\core\engine_window.fwd.h" />
+    <ClInclude Include="src\core\engine_window.h" />
+    <ClInclude Include="src\core\rendering\vertex.h" />
+    <ClInclude Include="src\core\rendering\vulkan_graphic_engine.fwd.h" />
+    <ClInclude Include="src\core\rendering\vulkan_graphic_engine.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Core\Shaders\shader.frag" />
-    <None Include="Core\Shaders\shader.vert" />
-    <None Include="Core\shader_compiler.bat" />
+    <None Include="src\core\shaders\shader.frag" />
+    <None Include="src\core\shaders\shader.vert" />
+    <None Include="src\core\shader_compiler.bat" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
