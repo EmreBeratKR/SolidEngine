@@ -110,7 +110,9 @@ namespace Engine::Rendering
         std::vector<void*> uniformBuffersMapped;
 
         VkImage textureImage;
+        VkImageView textureImageView;
         VkDeviceMemory textureImageMemory;
+        VkSampler textureSampler;
 
         uint32_t currentFrame = 0;
 
@@ -142,10 +144,13 @@ namespace Engine::Rendering
         void createDescriptorPool();
         void createDescriptorSets();
         void createTextureImage();
+        void createTextureImageView();
         void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
         void endSingleTimeCommands(VkCommandBuffer commandBuffer);
         void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
         void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+        void createTextureSampler();
+        VkImageView createImageView(VkImage image, VkFormat format);
         VkCommandBuffer beginSingleTimeCommands();
         VkShaderModule createShaderModule(const std::vector<char>& code);
         VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
