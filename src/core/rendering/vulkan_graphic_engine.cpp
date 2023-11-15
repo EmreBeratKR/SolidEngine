@@ -111,10 +111,10 @@ namespace Engine::Rendering
             Model model{};
             IO::loadObj("resources/models/viking_room.obj", &model);
 
-            int indexOffset = indices.size();
-
             for (const auto& mesh : model.meshes)
             {
+                int indexOffset = vertices.size();
+
                 for (const auto& vertex : mesh.vertices)
                 {
                     vertices.push_back(vertex);
