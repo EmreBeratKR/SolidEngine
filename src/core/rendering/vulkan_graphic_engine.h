@@ -21,25 +21,6 @@ namespace Engine::Rendering
 {
 	class VulkanGraphicEngine
 	{
-        const std::vector<Vertex> vertices = 
-        {
-            {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-            {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-            {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-            {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
-
-            {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-            {{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-            {{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-            {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
-        };
-
-        const std::vector<uint16_t> indices = 
-        {
-            0, 1, 2, 2, 3, 0,
-            4, 5, 6, 6, 7, 4
-        };
-
         const int MAX_FRAMES_IN_FLIGHT = 2;
 
         const std::vector<const char*> validationLayers =
@@ -103,9 +84,11 @@ namespace Engine::Rendering
 
         VkBuffer vertexBuffer;
         VkDeviceMemory vertexBufferMemory;
+        std::vector<Vertex> vertices;
 
         VkBuffer indexBuffer;
         VkDeviceMemory indexBufferMemory;
+        std::vector<uint32_t> indices;
 
         VkDescriptorSetLayout descriptorSetLayout;
         VkDescriptorPool descriptorPool;
@@ -127,6 +110,7 @@ namespace Engine::Rendering
         uint32_t currentFrame = 0;
 
     private:
+        void loadTestModel();
         void init(EngineWindow* engineWindow);
         void cleanup();
         void createInstance();

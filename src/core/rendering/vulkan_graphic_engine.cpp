@@ -7,8 +7,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <stb_image.h>
 
+#include "src/common/model_loader.h"
 #include "vulkan_graphic_engine.h"
-#include "vertex.h"
 #include "uniform_buffer_object.h"
 
 
@@ -16,6 +16,7 @@ namespace Engine::Rendering
 {
         VulkanGraphicEngine::VulkanGraphicEngine(EngineWindow* engineWindow)
         {
+            loadTestModel();
             init(engineWindow);
         }
 
@@ -104,6 +105,27 @@ namespace Engine::Rendering
             return vkDeviceWaitIdle(logicalDevice);
         }
 
+
+        void VulkanGraphicEngine::loadTestModel()
+        {
+            Model model{};
+            IO::loadObj("resources/models/viking_room.obj", &model);
+
+            int indexOffset = indices.size();
+
+            for (const auto& mesh : model.meshes)
+            {
+                for (const auto& vertex : mesh.vertices)
+                {
+                    vertices.push_back(vertex);
+                }
+
+                for (const auto& index : mesh.indices)
+                {
+                    indices.push_back(index + indexOffset);
+                }
+            }
+        }
 
         void VulkanGraphicEngine::init(EngineWindow* engineWindow)
         {
@@ -679,7 +701,7 @@ namespace Engine::Rendering
             VkBuffer vertexBuffers[] = { vertexBuffer };
             VkDeviceSize offsets[] = { 0 };
             vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-            vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+            vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
             vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, nullptr);
 
@@ -974,7 +996,7 @@ namespace Engine::Rendering
         void VulkanGraphicEngine::createTextureImage()
         {
             int texWidth, texHeight, texChannels;
-            stbi_uc* pixels = stbi_load("resources/textures/unity.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+            stbi_uc* pixels = stbi_load("resources/textures/viking_room.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
             VkDeviceSize imageSize = texWidth * texHeight * 4;
 
             if (!pixels) 
