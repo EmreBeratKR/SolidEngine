@@ -11,13 +11,17 @@ namespace Engine
 {
 	class EngineWindow
 	{
+	public:
+		static EngineWindow* main;
+
 	private:
-		const int WIDTH;
-		const int HEIGHT;
 		const std::string TITLE;
 
 		GLFWwindow* m_Window;
 		Rendering::VulkanGraphicEngine* m_GraphicEngine;
+		int width;
+		int height;
+		float aspectRatio;
 		bool framebufferResized = false;
 
 	private:
@@ -35,6 +39,7 @@ namespace Engine
 		void run();
 		void setGraphicEngine(Rendering::VulkanGraphicEngine* graphicApi);
 		GLFWwindow* getGLFWWindow();
+		float getAspectRatio();
 		bool getFrameBufferResized();
 		void setFrameBufferResized(bool value);
 	};

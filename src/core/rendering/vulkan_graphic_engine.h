@@ -111,7 +111,7 @@ namespace Engine::Rendering
         uint32_t currentFrame = 0;
 
     private:
-        void loadTestModel();
+        void test();
         void init(EngineWindow* engineWindow);
         void cleanup();
         void createInstance();
@@ -173,6 +173,7 @@ namespace Engine::Rendering
     public:
         void drawFrame();
         VkResult __stdcall waitIdle();
+
 
 #ifdef DEBUG
     private:
