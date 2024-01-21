@@ -1,13 +1,12 @@
 #include "camera.h"
 #include "src/core/engine_window.h"
+#include "transform.h";
 
 namespace Engine::Components
 {
 	Camera::Camera()
 	{
-		fov = 0.0f;
-		nearClip = 0.0f;
-		farClip = 0.0f;
+		
 	}
 
 	Camera::~Camera()
@@ -22,20 +21,50 @@ namespace Engine::Components
 	glm::mat4 Camera::getProjectionMatrix()
 	{
 		auto aspectRatio = EngineWindow::main->getAspectRatio();
-		auto matrix = glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip);
-		matrix[1][1] *= -1;
-		return matrix;
+
+		if (fabs(aspectRatio - this->aspectRatio) > FLT_EPSILON)
+		{
+			this->aspectRatio = aspectRatio;
+			updateProjectionMatrix();
+		}
+
+		return projectionMatrix;
+	}
+
+	glm::mat4 Camera::getViewMatrix()
+	{
+		auto transform = getTransform();
+		auto direction = transform->rotation * transform->position;
+
+		return glm::lookAt(direction, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	}
+
+	void Camera::updateProjectionMatrix()
+	{
+		projectionMatrix = createPerspectiveProjectionMatrix(fov, aspectRatio, nearClip, farClip);
 	}
 
 
 	Camera* Camera::perspective(float fov, float nearClip, float farClip)
 	{
 		auto camera = new Camera();
+		auto aspectRatio = EngineWindow::main->getAspectRatio();
 
 		camera->fov = fov;
+		camera->aspectRatio = aspectRatio;
 		camera->nearClip = nearClip;
 		camera->farClip = farClip;
+		camera->updateProjectionMatrix();
 
 		return camera;
+	}
+
+	glm::mat4 Camera::createPerspectiveProjectionMatrix(float fov, float aspectRatio, float nearClip, float farClip)
+	{
+		auto matrix = glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip);
+
+		matrix[1][1] *= -1;
+
+		return matrix;
 	}
 }

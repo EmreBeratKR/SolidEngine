@@ -23,7 +23,9 @@ namespace Engine
 		while (!shouldClose())
 		{
 			glfwPollEvents();
+			m_GraphicEngine->beginFrame();
 			m_GraphicEngine->drawFrame();
+			m_GraphicEngine->endFrame();
 		}
 
 		m_GraphicEngine->waitIdle();

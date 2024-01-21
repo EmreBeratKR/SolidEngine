@@ -161,6 +161,9 @@
   <ItemGroup>
     <ClCompile Include="src\common\model_loader.cpp" />
     <ClCompile Include="src\core\components\camera.cpp" />
+    <ClCompile Include="src\core\components\component.cpp" />
+    <ClCompile Include="src\core\components\transform.cpp" />
+    <ClCompile Include="src\core\game_object.cpp" />
     <ClCompile Include="src\core\rendering\vertex.cpp" />
     <ClCompile Include="src\core\rendering\vulkan_graphic_engine.cpp" />
     <ClCompile Include="src\core\main.cpp" />
@@ -170,8 +173,13 @@
     <ClInclude Include="src\common\debug.h" />
     <ClInclude Include="src\common\model_loader.h" />
     <ClInclude Include="src\core\components\camera.h" />
+    <ClInclude Include="src\core\components\component.h" />
+    <ClInclude Include="src\core\components\transform.fwd.h" />
+    <ClInclude Include="src\core\components\transform.h" />
     <ClInclude Include="src\core\engine_window.fwd.h" />
     <ClInclude Include="src\core\engine_window.h" />
+    <ClInclude Include="src\core\game_object.fwd.h" />
+    <ClInclude Include="src\core\game_object.h" />
     <ClInclude Include="src\core\rendering\mesh.h" />
     <ClInclude Include="src\core\rendering\model.h" />
     <ClInclude Include="src\core\rendering\uniform_buffer_object.h" />

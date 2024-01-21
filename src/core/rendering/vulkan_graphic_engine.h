@@ -109,6 +109,7 @@ namespace Engine::Rendering
         VkImageView depthImageView;
 
         uint32_t currentFrame = 0;
+        uint32_t currentImageIndex = 0;
 
     private:
         void test();
@@ -125,7 +126,6 @@ namespace Engine::Rendering
         void createFramebuffers();
         void createCommandPool();
         void createCommandBuffer();
-        void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
         void createSyncObjects();
         void recreateSwapChain();
         void cleanupSwapChain();
@@ -172,6 +172,8 @@ namespace Engine::Rendering
 
     public:
         void drawFrame();
+        VkCommandBuffer beginFrame();
+        void endFrame();
         VkResult __stdcall waitIdle();
 
 
