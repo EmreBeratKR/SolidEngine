@@ -10,6 +10,7 @@
 #include "src/common/model_loader.h"
 #include "vulkan_graphic_engine.h"
 #include "uniform_buffer_object.h"
+#include "push_constant_data.h"
 #include "src/core/components/camera.h"
 
 
@@ -164,7 +165,13 @@ namespace Engine::Rendering
 
             vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, nullptr);
 
-            vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+            for (size_t i = 0; i < 3; i++)
+            {
+                PushConstantData push{};
+                push.transform[0][0] = -2.0f * i + 2.0f;
+                vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstantData), &push);
+                vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+            }
         }
 
         VkResult __stdcall VulkanGraphicEngine::waitIdle()
@@ -177,6 +184,7 @@ namespace Engine::Rendering
         {
             Model model{};
             IO::loadObj("resources/models/viking_room.obj", &model);
+            //IO::loadObj("resources/models/torus.obj", &model);
 
             for (const auto& mesh : model.meshes)
             {
@@ -626,10 +634,17 @@ namespace Engine::Rendering
             dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
             dynamicState.pDynamicStates = dynamicStates.data();
 
+            VkPushConstantRange pushConstantRange{};
+            pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+            pushConstantRange.offset = 0;
+            pushConstantRange.size = sizeof(PushConstantData);
+
             VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
             pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
             pipelineLayoutInfo.setLayoutCount = 1;
             pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;
+            pipelineLayoutInfo.pushConstantRangeCount = 1;
+            pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
 
             if (vkCreatePipelineLayout(logicalDevice, &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS)
             {

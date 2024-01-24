@@ -92,6 +92,9 @@
     <ClInclude Include="src\core\game_object.fwd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\core\rendering\push_constant_data.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\glsl\shader.frag">

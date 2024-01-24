@@ -182,6 +182,7 @@
     <ClInclude Include="src\core\game_object.h" />
     <ClInclude Include="src\core\rendering\mesh.h" />
     <ClInclude Include="src\core\rendering\model.h" />
+    <ClInclude Include="src\core\rendering\push_constant_data.h" />
     <ClInclude Include="src\core\rendering\uniform_buffer_object.h" />
     <ClInclude Include="src\core\rendering\vertex.h" />
     <ClInclude Include="src\core\rendering\vulkan_graphic_engine.fwd.h" />

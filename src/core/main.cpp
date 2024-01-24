@@ -11,7 +11,7 @@ int main()
 
     Engine::GameObject* cameraObject = new Engine::GameObject();
     cameraObject->getTransform()->position = glm::vec3(2.0f, 2.0f, 2.0f);
-    Engine::Components::Camera* camera = Engine::Components::Camera::perspective(45.0f, 0.1f, 10.0f);
+    Engine::Components::Camera* camera = Engine::Components::Camera::perspective(120.0f, 0.1f, 10.0f);
     camera->setGameObject(cameraObject);
     Engine::Components::Camera::main = camera;
 
