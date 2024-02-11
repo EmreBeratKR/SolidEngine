@@ -167,8 +167,12 @@ namespace Engine::Rendering
 
             for (size_t i = 0; i < 3; i++)
             {
+                Components::Transform transform{};
+                transform.position = glm::vec3(2.0f * i - 2.0f, 0.0f, 0.0f);
+                transform.rotation = glm::quat(glm::radians(glm::vec3(20.0f, 180.0f, 0.0f)));
+                //transform.scale = glm::vec3(0.5f, 0.5f, 0.5f);
                 PushConstantData push{};
-                push.transform[0][0] = -2.0f * i + 2.0f;
+                push.transform = transform.getMatrix();
                 vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstantData), &push);
                 vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
             }
@@ -588,7 +592,7 @@ namespace Engine::Rendering
             rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
             rasterizer.lineWidth = 1.0f;
             rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-            rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+            rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
             rasterizer.depthBiasEnable = VK_FALSE;
 
             VkPipelineMultisampleStateCreateInfo multisampling{};
@@ -935,8 +939,7 @@ namespace Engine::Rendering
             glm::mat4 view = camera->getViewMatrix();
 
             UniformBufferObject ubo{};
-            ubo.model = glm::rotate(glm::mat4(1.0f), glm::radians(0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-            ubo.view = view;//glm::lookAt(glm::vec3(2.0f, 0.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+            ubo.view = view;
             ubo.proj = proj;
 
             memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));

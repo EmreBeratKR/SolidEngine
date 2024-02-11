@@ -15,14 +15,9 @@ namespace Engine::Components
 
 	glm::mat4 Transform::getMatrix()
 	{
-		glm::mat4 matrix{1.0f};
+		auto translationMatrix = glm::translate(glm::mat4{ 1.0f }, position);
+		auto rotationMatrix = glm::mat4_cast(rotation);
 
-		matrix = glm::translate(matrix, position);
-		matrix = glm::rotate(matrix, glm::eulerAngles(rotation).x, glm::vec3(1.0f, 0.0f, 0.0f));
-		matrix = glm::rotate(matrix, glm::eulerAngles(rotation).y, glm::vec3(0.0f, 1.0f, 0.0f));
-		matrix = glm::rotate(matrix, glm::eulerAngles(rotation).z, glm::vec3(0.0f, 0.0f, 1.0f));
-		matrix = glm::scale(matrix, scale);
-
-		return matrix;
+		return glm::scale(translationMatrix * rotationMatrix, scale);
 	}
 }

@@ -6,6 +6,7 @@
 #include "src/core/engine_window.fwd.h"
 #include "src/core/engine_window.h"
 #include "vertex.h"
+#include "src/core/components/transform.h"
 
 #include <GLFW/glfw3.h>
 #include <vector>

@@ -34,9 +34,9 @@ namespace Engine::Components
 	glm::mat4 Camera::getViewMatrix()
 	{
 		auto transform = getTransform();
-		auto direction = transform->rotation * transform->position;
+		auto matrix = transform->getMatrix();
 
-		return glm::lookAt(direction, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		return glm::inverse(matrix);
 	}
 
 	void Camera::updateProjectionMatrix()
@@ -61,7 +61,7 @@ namespace Engine::Components
 
 	glm::mat4 Camera::createPerspectiveProjectionMatrix(float fov, float aspectRatio, float nearClip, float farClip)
 	{
-		auto matrix = glm::perspective(glm::radians(fov), aspectRatio, nearClip, farClip);
+		auto matrix = glm::perspectiveLH_ZO(glm::radians(fov), aspectRatio, nearClip, farClip);
 
 		matrix[1][1] *= -1;
 
