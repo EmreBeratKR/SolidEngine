@@ -1,5 +1,5 @@
 #include "camera.h"
-#include "src/core/engine_window.h"
+#include "src/core/application.h"
 #include "transform.h";
 
 namespace Engine::Components
@@ -20,7 +20,7 @@ namespace Engine::Components
 
 	glm::mat4 Camera::getProjectionMatrix()
 	{
-		auto aspectRatio = EngineWindow::main->getAspectRatio();
+		auto aspectRatio = Application::instance->getAspectRatio();
 
 		if (fabs(aspectRatio - this->aspectRatio) > FLT_EPSILON)
 		{
@@ -48,7 +48,7 @@ namespace Engine::Components
 	Camera* Camera::perspective(float fov, float nearClip, float farClip)
 	{
 		auto camera = new Camera();
-		auto aspectRatio = EngineWindow::main->getAspectRatio();
+		auto aspectRatio = Application::instance->getAspectRatio();
 
 		camera->fov = fov;
 		camera->aspectRatio = aspectRatio;

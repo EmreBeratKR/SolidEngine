@@ -1,28 +1,29 @@
 #pragma once
 
-#include "Rendering/vulkan_graphic_engine.fwd.h"
-#include "Rendering/vulkan_graphic_engine.h"
-
 #include <string>
 #include <GLFW/glfw3.h>
 
 
+#include "layer_stack.h"
+
+
 namespace Engine
 {
-	class EngineWindow
+	class Application
 	{
 	public:
-		static EngineWindow* main;
+		static Application* instance;
 
 	private:
 		const std::string TITLE;
 
 		GLFWwindow* m_Window;
-		Rendering::VulkanGraphicEngine* m_GraphicEngine;
 		int width;
 		int height;
 		float aspectRatio;
 		bool framebufferResized = false;
+		LayerStack layerStack;
+
 
 	private:
 		void init();
@@ -32,15 +33,16 @@ namespace Engine
 		static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 
 	public:
-		EngineWindow(int width, int height, std::string title);
-		~EngineWindow();
+		Application(int width, int height, std::string title);
+		~Application();
 
 	public:
 		void run();
-		void setGraphicEngine(Rendering::VulkanGraphicEngine* graphicApi);
 		GLFWwindow* getGLFWWindow();
 		float getAspectRatio();
 		bool getFrameBufferResized();
 		void setFrameBufferResized(bool value);
+		void PushLayer(Layer* layer);
+		void PopLayer(Layer* layer);
 	};
 }

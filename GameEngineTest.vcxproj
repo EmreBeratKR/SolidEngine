@@ -164,10 +164,13 @@
     <ClCompile Include="src\core\components\component.cpp" />
     <ClCompile Include="src\core\components\transform.cpp" />
     <ClCompile Include="src\core\game_object.cpp" />
+    <ClCompile Include="src\core\layer_stack.cpp" />
+    <ClCompile Include="src\core\object.cpp" />
     <ClCompile Include="src\core\rendering\vertex.cpp" />
     <ClCompile Include="src\core\rendering\vulkan_graphic_engine.cpp" />
     <ClCompile Include="src\core\main.cpp" />
-    <ClCompile Include="src\core\engine_window.cpp" />
+    <ClCompile Include="src\core\application.cpp" />
+    <ClCompile Include="src\core\scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\common\debug.h" />
@@ -176,17 +179,19 @@
     <ClInclude Include="src\core\components\component.h" />
     <ClInclude Include="src\core\components\transform.fwd.h" />
     <ClInclude Include="src\core\components\transform.h" />
-    <ClInclude Include="src\core\engine_window.fwd.h" />
-    <ClInclude Include="src\core\engine_window.h" />
+    <ClInclude Include="src\core\application.h" />
     <ClInclude Include="src\core\game_object.fwd.h" />
     <ClInclude Include="src\core\game_object.h" />
+    <ClInclude Include="src\core\layer.h" />
+    <ClInclude Include="src\core\layer_stack.h" />
+    <ClInclude Include="src\core\object.h" />
     <ClInclude Include="src\core\rendering\mesh.h" />
     <ClInclude Include="src\core\rendering\model.h" />
     <ClInclude Include="src\core\rendering\push_constant_data.h" />
     <ClInclude Include="src\core\rendering\uniform_buffer_object.h" />
     <ClInclude Include="src\core\rendering\vertex.h" />
-    <ClInclude Include="src\core\rendering\vulkan_graphic_engine.fwd.h" />
     <ClInclude Include="src\core\rendering\vulkan_graphic_engine.h" />
+    <ClInclude Include="src\core\scene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\glsl\shader.frag" />

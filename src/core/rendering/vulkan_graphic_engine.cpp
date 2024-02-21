@@ -16,7 +16,7 @@
 
 namespace Engine::Rendering
 {
-        VulkanGraphicEngine::VulkanGraphicEngine(EngineWindow* engineWindow)
+        VulkanGraphicEngine::VulkanGraphicEngine(Application* engineWindow)
         {
             test();
             init(engineWindow);
@@ -25,6 +25,17 @@ namespace Engine::Rendering
         VulkanGraphicEngine::~VulkanGraphicEngine()
         {
             cleanup();
+        }
+
+
+        VulkanGraphicEngine* VulkanGraphicEngine::ms_Instance{nullptr};
+
+
+        void VulkanGraphicEngine::OnUpdate()
+        {
+            beginFrame();
+            drawFrame();
+            endFrame();
         }
 
 
@@ -206,7 +217,7 @@ namespace Engine::Rendering
             }
         }
 
-        void VulkanGraphicEngine::init(EngineWindow* engineWindow)
+        void VulkanGraphicEngine::init(Application* engineWindow)
         {
             this->engineWindow = engineWindow;
             this->window = engineWindow->getGLFWWindow();
@@ -239,6 +250,7 @@ namespace Engine::Rendering
 #ifdef DEBUG
             logPhysicalDeviceProperties(physicalDevice);
 #endif
+            ms_Instance = this;
         }
 
         void VulkanGraphicEngine::cleanup()

@@ -2,12 +2,6 @@
 
 #define GLFW_INCLUDE_VULKAN
 
-#include "src/common/debug.h"
-#include "src/core/engine_window.fwd.h"
-#include "src/core/engine_window.h"
-#include "vertex.h"
-#include "src/core/components/transform.h"
-
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <optional>
@@ -17,10 +11,16 @@
 #include <algorithm>
 #include <set>
 
+#include "src/common/debug.h"
+#include "src/core/application.h"
+#include "vertex.h"
+#include "src/core/components/transform.h"
+#include "src/core/layer.h"
+
 
 namespace Engine::Rendering
 {
-	class VulkanGraphicEngine
+	class VulkanGraphicEngine : public Layer
 	{
         const int MAX_FRAMES_IN_FLIGHT = 2;
 
@@ -53,7 +53,7 @@ namespace Engine::Rendering
         };
 
     private:
-        EngineWindow* engineWindow;
+        Application* engineWindow;
         GLFWwindow* window;
 
         VkInstance instance;
@@ -114,7 +114,7 @@ namespace Engine::Rendering
 
     private:
         void test();
-        void init(EngineWindow* engineWindow);
+        void init(Application* engineWindow);
         void cleanup();
         void createInstance();
         void createSurface();
@@ -168,7 +168,7 @@ namespace Engine::Rendering
         static std::vector<char> readFile(const std::string& filename);
 
     public:
-        VulkanGraphicEngine(EngineWindow* engineWindow);
+        VulkanGraphicEngine(Application* engineWindow);
         ~VulkanGraphicEngine();
 
     public:
@@ -176,6 +176,11 @@ namespace Engine::Rendering
         VkCommandBuffer beginFrame();
         void endFrame();
         VkResult __stdcall waitIdle();
+        virtual void OnUpdate();
+
+    public:
+        static VulkanGraphicEngine* ms_Instance;
+
 
 
 #ifdef DEBUG

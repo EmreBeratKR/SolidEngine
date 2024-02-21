@@ -7,6 +7,7 @@ namespace Engine
 	GameObject::GameObject()
 	{
 		transform = new Components::Transform();
+		addComponent(transform);
 	}
 
 	GameObject::~GameObject()
@@ -18,5 +19,12 @@ namespace Engine
 	Components::Transform* GameObject::getTransform()
 	{
 		return transform;
+	}
+
+	template<typename T>
+	void GameObject::addComponent(T* component)
+	{
+		component->setGameObject(this);
+		//components.push_back(component);
 	}
 }
