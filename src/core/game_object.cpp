@@ -20,11 +20,4 @@ namespace Engine
 	{
 		return transform;
 	}
-
-	template<typename T>
-	void GameObject::addComponent(T* component)
-	{
-		component->setGameObject(this);
-		//components.push_back(component);
-	}
 }

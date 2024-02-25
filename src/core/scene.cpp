@@ -15,10 +15,9 @@ namespace Engine
 		auto transform = go->getTransform();
 		auto camera = Components::Camera::perspective(60.0f, 0.01f, 100.0f);
 
-		//go->addComponent(camera);
-
+		go->addComponent(camera);
 		transform->position = { 0.0f, 0.0f, -8.0f };
-		camera->setGameObject(go);
+
 		Components::Camera::main = camera;
 	}
 

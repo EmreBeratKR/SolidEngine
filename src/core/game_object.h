@@ -16,9 +16,14 @@ namespace Engine
 		~GameObject();
 	public:
 		Components::Transform* getTransform();
-		template<typename T> void addComponent(T* component);
+	public:
+		template<typename T> void addComponent(T* component)
+		{
+			component->setGameObject(this);
+			components.push_back(component);
+		}
 	private:
 		Components::Transform* transform;
-		std::vector<Components::Component> components;
+		std::vector<Components::Component*> components;
 	};
 }
