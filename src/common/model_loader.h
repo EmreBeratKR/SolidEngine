@@ -6,5 +6,5 @@
 
 namespace Engine::IO
 {
-	void loadObj(const char* path, Rendering::Model* model);
+	Rendering::Model* loadObj(const char* path);
 }

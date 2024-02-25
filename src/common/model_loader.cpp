@@ -7,10 +7,11 @@
 
 namespace Engine::IO
 {
-	void loadObj(const char* path, Rendering::Model* model)
+    Rendering::Model* loadObj(const char* path)
 	{
         //TODO check if path ends with .obj
 
+        Rendering::Model* model = new Rendering::Model();
         tinyobj::attrib_t attrib;
         std::vector<tinyobj::shape_t> shapes;
         std::vector<tinyobj::material_t> materials;
@@ -53,6 +54,8 @@ namespace Engine::IO
             }
 
             model->meshes.push_back(mesh);
+
+            return model;
         }
 	}
 }

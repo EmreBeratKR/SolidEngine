@@ -197,11 +197,10 @@ namespace Engine::Rendering
 
         void VulkanGraphicEngine::test()
         {
-            Model model{};
-            IO::loadObj("resources/models/viking_room.obj", &model);
-            //IO::loadObj("resources/models/torus.obj", &model);
+            Model* model = IO::loadObj("resources/models/viking_room.obj");
+            //Model* model = IO::loadObj("resources/models/torus.obj");
 
-            for (const auto& mesh : model.meshes)
+            for (const auto& mesh : model->meshes)
             {
                 int indexOffset = vertices.size();
 
