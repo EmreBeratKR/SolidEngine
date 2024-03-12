@@ -15,6 +15,8 @@ namespace Engine
 		GameObject();
 		~GameObject();
 	public:
+		void OnUpdate();
+		void OnRender();
 		Components::Transform* getTransform();
 	public:
 		template<typename T> void addComponent(T* component)

@@ -16,6 +16,7 @@ namespace Engine
 		~LayerStack();
 
 		void OnUpdate();
+		void OnRender();
 		void PushLayer(Layer* layer);
 		void PopLayer(Layer* layer);
 

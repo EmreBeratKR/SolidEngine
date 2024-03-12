@@ -14,13 +14,14 @@
 #include "src/common/debug.h"
 #include "src/core/application.h"
 #include "vertex.h"
+#include "push_constant_data.h"
 #include "src/core/components/transform.h"
 #include "src/core/layer.h"
 
 
 namespace Engine::Rendering
 {
-	class VulkanGraphicEngine : public Layer
+	class VulkanGraphicEngine
 	{
         const int MAX_FRAMES_IN_FLIGHT = 2;
 
@@ -113,7 +114,6 @@ namespace Engine::Rendering
         uint32_t currentImageIndex = 0;
 
     private:
-        void test();
         void init(Application* engineWindow);
         void cleanup();
         void createInstance();
@@ -136,7 +136,6 @@ namespace Engine::Rendering
         void createIndexBuffer();
         void createDescriptorSetLayout();
         void createUniformBuffers();
-        void updateUniformBuffer(uint32_t currentImage);
         void createDescriptorPool();
         void createDescriptorSets();
         void createTextureImage();
@@ -172,11 +171,14 @@ namespace Engine::Rendering
         ~VulkanGraphicEngine();
 
     public:
+        void setVertices(std::vector<Vertex> vertices);
+        void setIndices(std::vector<uint32_t> indices);
+        void setViewAndProjectionMatrices(glm::mat4 view, glm::mat4 proj);
+        void setPushConstant(PushConstantData pushConstant);
         void drawFrame();
         VkCommandBuffer beginFrame();
         void endFrame();
         VkResult __stdcall waitIdle();
-        virtual void OnUpdate();
 
     public:
         static VulkanGraphicEngine* ms_Instance;

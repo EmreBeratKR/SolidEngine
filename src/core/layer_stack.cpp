@@ -29,6 +29,14 @@ namespace Engine
 		}
 	}
 
+	void LayerStack::OnRender()
+	{
+		for (const auto& layer : m_Layers)
+		{
+			layer->OnRender();
+		}
+	}
+
 	void LayerStack::PushLayer(Layer* layer)
 	{
 		layer->OnAttach();

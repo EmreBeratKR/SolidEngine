@@ -10,7 +10,6 @@
 #include "src/common/model_loader.h"
 #include "vulkan_graphic_engine.h"
 #include "uniform_buffer_object.h"
-#include "push_constant_data.h"
 #include "src/core/components/camera.h"
 
 
@@ -18,7 +17,6 @@ namespace Engine::Rendering
 {
         VulkanGraphicEngine::VulkanGraphicEngine(Application* engineWindow)
         {
-            test();
             init(engineWindow);
         }
 
@@ -31,13 +29,49 @@ namespace Engine::Rendering
         VulkanGraphicEngine* VulkanGraphicEngine::ms_Instance{nullptr};
 
 
-        void VulkanGraphicEngine::OnUpdate()
+        void VulkanGraphicEngine::setVertices(std::vector<Vertex> vertices)
         {
-            beginFrame();
-            drawFrame();
-            endFrame();
+            auto shouldResize = this->vertices.size() < vertices.size();
+
+            this->vertices = vertices;
+            
+            //if (!shouldResize) return;
+
+            //waitIdle();
+            //vkDestroyBuffer(logicalDevice, vertexBuffer, nullptr);
+            //vkFreeMemory(logicalDevice, vertexBufferMemory, nullptr);
+            createVertexBuffer();
         }
 
+        void VulkanGraphicEngine::setIndices(std::vector<uint32_t> indices)
+        {
+            auto shouldResize = this->indices.size() < indices.size();
+
+            this->indices = indices;
+
+            //if (!shouldResize) return;
+
+            //waitIdle();
+            //vkDestroyBuffer(logicalDevice, indexBuffer, nullptr);
+            //vkFreeMemory(logicalDevice, indexBufferMemory, nullptr);
+            createIndexBuffer();
+        }
+
+        void VulkanGraphicEngine::setViewAndProjectionMatrices(glm::mat4 view, glm::mat4 proj)
+        {
+            UniformBufferObject ubo{};
+            ubo.view = view;
+            ubo.proj = proj;
+
+            memcpy(uniformBuffersMapped[currentFrame], &ubo, sizeof(ubo));
+        }
+
+        void VulkanGraphicEngine::setPushConstant(PushConstantData pushConstant)
+        {
+            VkCommandBuffer commandBuffer = commandBuffers[currentFrame];
+
+            vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstantData), &pushConstant);
+        }
 
         VkCommandBuffer VulkanGraphicEngine::beginFrame()
         {
@@ -166,8 +200,6 @@ namespace Engine::Rendering
 
         void VulkanGraphicEngine::drawFrame()
         {
-            updateUniformBuffer(currentFrame);
-
             VkCommandBuffer commandBuffer = commandBuffers[currentFrame];
             VkBuffer vertexBuffers[] = { vertexBuffer };
             VkDeviceSize offsets[] = { 0 };
@@ -175,18 +207,7 @@ namespace Engine::Rendering
             vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
             vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, nullptr);
-
-            for (size_t i = 0; i < 3; i++)
-            {
-                Components::Transform transform{};
-                transform.position = glm::vec3(2.0f * i - 2.0f, 0.0f, 0.0f);
-                transform.rotation = glm::quat(glm::radians(glm::vec3(20.0f, 180.0f, 0.0f)));
-                //transform.scale = glm::vec3(0.5f, 0.5f, 0.5f);
-                PushConstantData push{};
-                push.transform = transform.getMatrix();
-                vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstantData), &push);
-                vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
-            }
+            vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
         }
 
         VkResult __stdcall VulkanGraphicEngine::waitIdle()
@@ -194,27 +215,6 @@ namespace Engine::Rendering
             return vkDeviceWaitIdle(logicalDevice);
         }
 
-
-        void VulkanGraphicEngine::test()
-        {
-            Model* model = IO::loadObj("resources/models/viking_room.obj");
-            //Model* model = IO::loadObj("resources/models/torus.obj");
-
-            for (const auto& mesh : model->meshes)
-            {
-                int indexOffset = vertices.size();
-
-                for (const auto& vertex : mesh.vertices)
-                {
-                    vertices.push_back(vertex);
-                }
-
-                for (const auto& index : mesh.indices)
-                {
-                    indices.push_back(index + indexOffset);
-                }
-            }
-        }
 
         void VulkanGraphicEngine::init(Application* engineWindow)
         {
@@ -239,8 +239,8 @@ namespace Engine::Rendering
             createTextureImage();
             createTextureImageView();
             createTextureSampler();
-            createVertexBuffer();
-            createIndexBuffer();
+            //createVertexBuffer();
+            //createIndexBuffer();
             createUniformBuffers();
             createDescriptorPool();
             createDescriptorSets();
@@ -941,19 +941,6 @@ namespace Engine::Rendering
 
                 vkMapMemory(logicalDevice, uniformBuffersMemory[i], 0, bufferSize, 0, &uniformBuffersMapped[i]);
             }
-        }
-
-        void VulkanGraphicEngine::updateUniformBuffer(uint32_t currentImage)
-        {
-            auto camera = Components::Camera::main;
-            glm::mat4 proj = camera->getProjectionMatrix();
-            glm::mat4 view = camera->getViewMatrix();
-
-            UniformBufferObject ubo{};
-            ubo.view = view;
-            ubo.proj = proj;
-
-            memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
         }
 
         void VulkanGraphicEngine::createDescriptorPool()
