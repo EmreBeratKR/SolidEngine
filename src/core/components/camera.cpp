@@ -1,6 +1,6 @@
 #include "camera.h"
-#include "src/core/application.h"
-#include "transform.h";
+#include "../application.h"
+#include "transform.h"
 
 namespace Engine::Components
 {

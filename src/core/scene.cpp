@@ -3,12 +3,12 @@
 
 #include "scene.h"
 #include "scene_manager.h"
-#include "src/core/game_object.h"
-#include "src/core/components/transform.h"
-#include "src/core/components/camera.h"
-#include "src/core/components/mesh_renderer.h"
-#include "src/common/model_loader.h"
-#include "src/core/rendering/vulkan_graphic_engine.h"
+#include "game_object.h"
+#include "components/transform.h"
+#include "components/camera.h"
+#include "components/mesh_renderer.h"
+#include "../common/model_loader.h"
+#include "rendering/vulkan_graphic_engine.h"
 
 
 namespace Engine

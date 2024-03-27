@@ -1,5 +1,5 @@
 #include "scene_manager.h"
-#include "scene.h";
+#include "scene.h"
 
 
 namespace Engine

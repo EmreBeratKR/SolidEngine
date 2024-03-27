@@ -11,12 +11,12 @@
 #include <algorithm>
 #include <set>
 
-#include "src/common/debug.h"
-#include "src/core/application.h"
+#include "../../common/debug.h"
+#include "../application.h"
 #include "vertex.h"
 #include "push_constant_data.h"
-#include "src/core/components/transform.h"
-#include "src/core/layer.h"
+#include "../components/transform.h"
+#include "../layer.h"
 
 
 namespace Engine::Rendering

@@ -1,5 +1,5 @@
 #include "component.h"
-#include "src/core/game_object.h"
+#include "../game_object.h"
 
 
 namespace Engine::Components

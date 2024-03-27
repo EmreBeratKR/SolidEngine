@@ -1,7 +1,7 @@
 #pragma once
 
 #include <tiny_obj_loader.h>
-#include "src/core/rendering/model.h"
+#include "../core/rendering/model.h"
 
 
 namespace Engine::IO

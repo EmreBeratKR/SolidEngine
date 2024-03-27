@@ -7,10 +7,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <stb_image.h>
 
-#include "src/common/model_loader.h"
+#include "../../common/model_loader.h"
 #include "vulkan_graphic_engine.h"
 #include "uniform_buffer_object.h"
-#include "src/core/components/camera.h"
+#include "../components/camera.h"
 
 
 namespace Engine::Rendering
@@ -321,6 +321,7 @@ namespace Engine::Rendering
             VkInstanceCreateInfo createInfo{};
             createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
             createInfo.pApplicationInfo = &appInfo;
+            createInfo.flags = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
 
             auto extensions = getRequiredExtensions();
             createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
@@ -1471,6 +1472,7 @@ namespace Engine::Rendering
             glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
             std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
+            extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
 
 #ifdef DEBUG
             extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);

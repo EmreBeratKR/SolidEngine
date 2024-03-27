@@ -1,8 +1,8 @@
 #pragma once
 
-#include "src/core/game_object.fwd.h"
+#include "../game_object.fwd.h"
 #include "transform.fwd.h"
-#include "src/core/object.h"
+#include "../object.h"
 
 namespace Engine::Components
 {

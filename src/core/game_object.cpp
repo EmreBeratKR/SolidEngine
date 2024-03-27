@@ -1,5 +1,5 @@
 #include "game_object.h"
-#include "src/core/components/transform.h"
+#include "../components/transform.h"
 
 
 namespace Engine
