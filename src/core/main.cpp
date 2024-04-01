@@ -1,5 +1,5 @@
 #include "application.h"
-#include "rendering/vulkan_graphic_engine.h"
+#include "vulkan_graphic_engine.h"
 #include "scene_manager.h"
 #include "scene.h"
 

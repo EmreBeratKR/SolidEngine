@@ -1,5 +1,5 @@
+#include "application.h"
 #include "camera.h"
-#include "../application.h"
 #include "transform.h"
 
 namespace Engine::Components

@@ -1,7 +1,10 @@
 #pragma once
 
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
+
+
 #include "component.h"
+
 
 namespace Engine::Components
 {

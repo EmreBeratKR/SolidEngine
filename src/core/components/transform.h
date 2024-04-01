@@ -1,8 +1,11 @@
 #pragma once
 
-#include "glm/glm.hpp"
-#include "glm/gtc/quaternion.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+
+
 #include "component.h"
+
 
 namespace Engine::Components
 {

@@ -2,15 +2,17 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #define STB_IMAGE_IMPLEMENTATION
 
+
 #include <chrono>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <stb_image.h>
 
-#include "../../common/model_loader.h"
+
+#include "model_loader.h"
 #include "vulkan_graphic_engine.h"
 #include "uniform_buffer_object.h"
-#include "../components/camera.h"
+#include "camera.h"
 
 
 namespace Engine::Rendering

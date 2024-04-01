@@ -2,7 +2,7 @@
 
 
 #include "component.h"
-#include "../rendering/mesh.h"
+#include "mesh.h"
 
 
 namespace Engine::Components

@@ -1,8 +1,9 @@
 #pragma once
 
+#include <vector>
+
 
 #include "vertex.h"
-#include <vector>
 
 
 namespace Engine::Rendering

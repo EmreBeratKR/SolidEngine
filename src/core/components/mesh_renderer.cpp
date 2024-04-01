@@ -1,8 +1,8 @@
 #include <iostream>
 
 
-#include "../rendering/vulkan_graphic_engine.h"
-#include "../rendering/push_constant_data.h"
+#include "vulkan_graphic_engine.h"
+#include "push_constant_data.h"
 #include "mesh_renderer.h"
 
 

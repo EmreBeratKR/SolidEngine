@@ -1,9 +1,10 @@
 #pragma once
 
-#include "vector"
+#include <vector>
 
-#include "components/transform.fwd.h"
-#include "components/component.h"
+
+#include "transform.fwd.h"
+#include "component.h"
 #include "object.h"
 
 

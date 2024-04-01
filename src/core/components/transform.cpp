@@ -1,5 +1,6 @@
 #include "transform.h"
 
+
 namespace Engine::Components
 {
 	Transform::Transform()
