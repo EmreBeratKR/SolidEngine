@@ -66,7 +66,6 @@ build: compile_shaders
 	@echo [RELEASE] build successful at [$(RELEASE_BUILD_DIR)/$(APP_NAME)]
 	@$(call EXECUTE,$(RELEASE_BUILD_DIR)/$(APP_NAME))
 
-
 debug: compile_shaders
 	@$(call MK_DIR,$(DEBUG_BUILD_DIR))
 	@$(CXX) $(COMPILER_FLAGS) $(SRC_FILES) -o $(DEBUG_BUILD_DIR)/$(APP_NAME) $(INCLUDE_FLAGS) $(LINKER_FLAGS) $(PREPROCESSORS) $(DEBUG_BUILD_PREPROCCESTOR_FLAGS)
