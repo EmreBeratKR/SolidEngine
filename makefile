@@ -21,6 +21,7 @@ ifeq ($(OS),Windows_NT)
 	EXTRA_LINKER_FLAGS = -lgdi32
 	PREPROCESSORS = -D WINDOWS
 	SHADER_COMPILER = bats\shader_compiler.bat
+	EXECUTE = $(1)
 else
 	ROOT_DIR = $(realpath $(shell dirname $(firstword $(MAKEFILE_LIST))))
 	MK_DIR = mkdir -p $(1)
@@ -33,6 +34,7 @@ else
 	EXTRA_LINKER_FLAGS = -framework Cocoa -framework IOKit -framework CoreFoundation
 	PREPROCESSORS = -D MACOS
 	SHADER_COMPILER = sh bats/shader_compiler.sh
+	EXECUTE = DYLD_LIBRARY_PATH=$(VULKAN_LIB) $(1)
 endif
 
 
@@ -62,14 +64,14 @@ build: compile_shaders
 	@$(call MK_DIR,$(RELEASE_BUILD_DIR))
 	@$(CXX) $(COMPILER_FLAGS) $(SRC_FILES) -o $(RELEASE_BUILD_DIR)/$(APP_NAME) $(INCLUDE_FLAGS) $(LINKER_FLAGS) $(PREPROCESSORS)
 	@echo [RELEASE] build successful at [$(RELEASE_BUILD_DIR)/$(APP_NAME)]
-	@$(RELEASE_BUILD_DIR)/$(APP_NAME)
+	@$(call EXECUTE,$(RELEASE_BUILD_DIR)/$(APP_NAME))
 
 
 debug: compile_shaders
 	@$(call MK_DIR,$(DEBUG_BUILD_DIR))
 	@$(CXX) $(COMPILER_FLAGS) $(SRC_FILES) -o $(DEBUG_BUILD_DIR)/$(APP_NAME) $(INCLUDE_FLAGS) $(LINKER_FLAGS) $(PREPROCESSORS) $(DEBUG_BUILD_PREPROCCESTOR_FLAGS)
 	@echo [DEBUG] build successful at [$(DEBUG_BUILD_DIR)/$(APP_NAME)]
-	@$(DEBUG_BUILD_DIR)/$(APP_NAME)
+	@$(call EXECUTE,$(DEBUG_BUILD_DIR)/$(APP_NAME))
 
 compile_shaders:
 	@$(SHADER_COMPILER)
