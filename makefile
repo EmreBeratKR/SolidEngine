@@ -16,17 +16,19 @@ ifeq ($(OS),Windows_NT)
 	find_files = $(foreach file,$(wildcard $(1)/*),$(wildcard $(file)/*.cpp) $(call find_files,$(file)))
 	SRC_FILES = src/core/scene.cpp src/core/object.cpp src/core/components/mesh_renderer.cpp src/core/components/camera.cpp src/core/components/component.cpp src/core/components/transform.cpp src/core/game_object.cpp src/core/scene_manager.cpp src/core/rendering/vulkan_graphic_engine.cpp src/core/rendering/vertex.cpp src/core/layer_stack.cpp src/core/application.cpp src/core/main.cpp src/common/model_loader.cpp#$(call find_files,$(SRC_DIR))
 	GLFW_DIR = $(VENDORS)/glfw-3.3.8.bin.WIN64
-	GLFW_LIB:= $(GLFW_DIR)/lib-mingw-w64
-	EXTRA_LINKER_FLAGS = 
+	GLFW_LIB = $(GLFW_DIR)/lib-mingw-w64
+	VULKAN_LIB = $(VULKAN_SDK)/Lib
+	EXTRA_LINKER_FLAGS = -lgdi32
 	SHADER_COMPILER = bats\shader_compiler.bat
 else
-	ROOT_DIR = $(realpath $(shell dirname $(firstword $(MAKEFILE_LIST))));
+	ROOT_DIR = $(realpath $(shell dirname $(firstword $(MAKEFILE_LIST))))
 	MK_DIR = mkdir -p $(1)
 	INC_DIRS = $(shell find $(SRC_DIR) -type d)
 	INC_DIRS_FLAG = $(addprefix -I$(ROOT_DIR)/,$(INC_DIRS))
-	SRC_FILES:= $(shell find $(SRC_DIR) -type f \( -name "*.cpp" \))
+	SRC_FILES = $(shell find $(SRC_DIR) -type f \( -name "*.cpp" \))
 	GLFW_DIR = $(VENDORS)/glfw-3.4.bin.MACOS
-	GLFW_LIB:= $(GLFW_DIR)/lib-arm64
+	GLFW_LIB = $(GLFW_DIR)/lib-arm64
+	VULKAN_LIB = $(VULKAN_SDK)/lib
 	EXTRA_LINKER_FLAGS = -framework Cocoa -framework IOKit -framework CoreFoundation
 	SHADER_COMPILER = sh bats/shader_compiler.sh
 endif
@@ -36,13 +38,12 @@ endif
 GLFW_INC:= $(GLFW_DIR)/include
 GLM:= $(VENDORS)/glm
 VULKAN_INCLUDE:= $(VULKAN_SDK)/include
-VULKAN_LIB:= $(VULKAN_SDK)/Lib
 
 
 #flags
 COMPILER_FLAGS:= -std=c++17
 INCLUDE_FLAGS:= -I$(ROOT_DIR) $(INC_DIRS_FLAG) -I$(GLM) -I$(GLFW_INC) -I$(VENDORS) -I$(VULKAN_INCLUDE)
-LINKER_FLAGS:= -L$(VULKAN_LIB) -lvulkan -L$(GLFW_LIB) -lglfw3 -lgdi32 $(EXTRA_LINKER_FLAGS)
+LINKER_FLAGS:= -L$(VULKAN_LIB) -lvulkan -L$(GLFW_LIB) -lglfw3 $(EXTRA_LINKER_FLAGS)
 
 
 #release build
