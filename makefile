@@ -71,6 +71,3 @@ debug: compile_shaders
 compile_shaders:
 	@$(SHADER_COMPILER)
 	@echo shaders are compiled successfully!
-
-test:
-	@echo $(VULKAN_LIB)
