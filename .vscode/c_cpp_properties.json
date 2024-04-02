@@ -1,11 +1,20 @@
 {
     "configurations": [
         {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": ["DEBUG"],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macos-clang-arm64"
+        },
+        {
             "name": "Mac",
             "includePath": [
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/vendors",
-                "${workspaceFolder}/vendors/glfw-3.4.bin.MACOS/include"
+                "${workspaceFolder}/**"
             ],
             "defines": ["DEBUG"],
             "macFrameworkPath": [
