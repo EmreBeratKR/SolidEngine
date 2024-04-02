@@ -10,11 +10,11 @@ VENDORS:= vendors
 ifeq ($(OS),Windows_NT)
 	ROOT_DIR = $(shell cd)
 	MK_DIR = powershell -Command "if (!(Test-Path $(1))) {New-Item -Path $(1) -ItemType Directory}"
-	find_dirs = $(wildcard $(1)) $(foreach dir,$(wildcard $(1)/*),$(call find_dirs,$(dir)))
-	INC_DIRS = src src/core src/core/components src/core/rendering src/common#$(call find_dirs,$(SRC_DIR))
+	find_dirs = $(1) $(foreach dir,$(wildcard $(1)/*),$(if $(wildcard $(dir)/.),$(call find_dirs,$(dir))))
+	INC_DIRS = $(call find_dirs,$(SRC_DIR))
 	INC_DIRS_FLAG = $(addprefix -I,$(subst /,\,$(addprefix $(ROOT_DIR)/,$(INC_DIRS))))
-	find_files = $(foreach file,$(wildcard $(1)/*),$(wildcard $(file)/*.cpp) $(call find_files,$(file)))
-	SRC_FILES = src/core/scene.cpp src/core/object.cpp src/core/components/mesh_renderer.cpp src/core/components/camera.cpp src/core/components/component.cpp src/core/components/transform.cpp src/core/game_object.cpp src/core/scene_manager.cpp src/core/rendering/vulkan_graphic_engine.cpp src/core/rendering/vertex.cpp src/core/layer_stack.cpp src/core/application.cpp src/core/main.cpp src/common/model_loader.cpp#$(call find_files,$(SRC_DIR))
+	find_files = $(foreach file,$(wildcard $(1)/*.cpp),$(file))$(foreach file,$(wildcard $(1)/*),$(call find_files,$(file)))
+	SRC_FILES = $(call find_files,$(SRC_DIR))
 	GLFW_DIR = $(VENDORS)/glfw-3.3.8.bin.WIN64
 	GLFW_LIB = $(GLFW_DIR)/lib-mingw-w64
 	VULKAN_LIB = $(VULKAN_SDK)/Lib
