@@ -19,6 +19,7 @@ ifeq ($(OS),Windows_NT)
 	GLFW_LIB = $(GLFW_DIR)/lib-mingw-w64
 	VULKAN_LIB = $(VULKAN_SDK)/Lib
 	EXTRA_LINKER_FLAGS = -lgdi32
+	PREPROCESSORS = -D WINDOWS
 	SHADER_COMPILER = bats\shader_compiler.bat
 else
 	ROOT_DIR = $(realpath $(shell dirname $(firstword $(MAKEFILE_LIST))))
@@ -30,6 +31,7 @@ else
 	GLFW_LIB = $(GLFW_DIR)/lib-arm64
 	VULKAN_LIB = $(VULKAN_SDK)/lib
 	EXTRA_LINKER_FLAGS = -framework Cocoa -framework IOKit -framework CoreFoundation
+	PREPROCESSORS = -D MACOS
 	SHADER_COMPILER = sh bats/shader_compiler.sh
 endif
 
@@ -58,14 +60,14 @@ DEBUG_BUILD_PREPROCCESTOR_FLAGS:= -D DEBUG
 .PHONY: build
 build: compile_shaders
 	@$(call MK_DIR,$(RELEASE_BUILD_DIR))
-	@$(CXX) $(COMPILER_FLAGS) $(SRC_FILES) -o $(RELEASE_BUILD_DIR)/$(APP_NAME) $(INCLUDE_FLAGS) $(LINKER_FLAGS)
+	@$(CXX) $(COMPILER_FLAGS) $(SRC_FILES) -o $(RELEASE_BUILD_DIR)/$(APP_NAME) $(INCLUDE_FLAGS) $(LINKER_FLAGS) $(PREPROCESSORS)
 	@echo [RELEASE] build successful at [$(RELEASE_BUILD_DIR)/$(APP_NAME)]
 	@$(RELEASE_BUILD_DIR)/$(APP_NAME)
 
 
 debug: compile_shaders
 	@$(call MK_DIR,$(DEBUG_BUILD_DIR))
-	@$(CXX) $(COMPILER_FLAGS) $(SRC_FILES) -o $(DEBUG_BUILD_DIR)/$(APP_NAME) $(INCLUDE_FLAGS) $(LINKER_FLAGS) $(DEBUG_BUILD_PREPROCCESTOR_FLAGS)
+	@$(CXX) $(COMPILER_FLAGS) $(SRC_FILES) -o $(DEBUG_BUILD_DIR)/$(APP_NAME) $(INCLUDE_FLAGS) $(LINKER_FLAGS) $(PREPROCESSORS) $(DEBUG_BUILD_PREPROCCESTOR_FLAGS)
 	@echo [DEBUG] build successful at [$(DEBUG_BUILD_DIR)/$(APP_NAME)]
 	@$(DEBUG_BUILD_DIR)/$(APP_NAME)
 

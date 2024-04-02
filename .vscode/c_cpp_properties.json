@@ -7,7 +7,7 @@
                 "${workspaceFolder}/vendors/**",
                 "C:/VulkanSDK/1.3.261.1/Include"
             ],
-            "defines": ["DEBUG"],
+            "defines": ["DEBUG", "WINDOWS"],
             "compilerPath": "C:/msys64/ucrt64/bin/g++",
             "cStandard": "c17",
             "cppStandard": "c++17",
@@ -19,7 +19,7 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/vendors/**"
             ],
-            "defines": ["DEBUG"],
+            "defines": ["DEBUG", "MACOS"],
             "macFrameworkPath": [
                 "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks"
             ],
