@@ -40,7 +40,7 @@ namespace Engine::Rendering
 
             void AllocateWithUsageFlag(VkBufferUsageFlagBits usageFlag)
             {
-                VulkanGraphicEngine* vulkan = VulkanGraphicEngine::ms_Instance;
+                VulkanGraphicEngine* vulkan = VulkanGraphicEngine::GetInstance();
                 VkDeviceSize bufferSize = sizeof(items[0]) * items.size();
                 VkBuffer stagingBuffer;
                 VkDeviceMemory stagingBufferMemory;

@@ -57,6 +57,8 @@ namespace Engine::Rendering
         };
 
     private:
+        static VulkanGraphicEngine* ms_Instance;
+
         Application* engineWindow;
         GLFWwindow* window;
 
@@ -183,10 +185,6 @@ namespace Engine::Rendering
         VkPhysicalDevice GetPhysicalDevice() const;
 
         static VulkanGraphicEngine* GetInstance();
-
-    public:
-        static VulkanGraphicEngine* ms_Instance;
-
 
 
 #ifdef DEBUG

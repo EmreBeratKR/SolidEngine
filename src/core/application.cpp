@@ -21,7 +21,7 @@ namespace Engine
 
 	void Application::run()
 	{
-		auto vulkan = Rendering::VulkanGraphicEngine::ms_Instance;
+		auto vulkan = Rendering::VulkanGraphicEngine::GetInstance();
 
 		while (!shouldClose())
 		{

@@ -10,18 +10,19 @@ namespace Engine::Components
 {
 	void MeshRenderer::OnRender()
 	{
+		auto vulkan = Rendering::VulkanGraphicEngine::GetInstance();
 		auto transform = getTransform();
 		auto vertexBuffer = mesh->vertexBuffer;
 		auto indexBuffer = mesh->indexBuffer;
 
-		Rendering::VulkanGraphicEngine::ms_Instance->setVertexBuffer(vertexBuffer.GetVkBuffer());
-		Rendering::VulkanGraphicEngine::ms_Instance->setIndexBuffer(indexBuffer.GetVkBuffer(), indexBuffer.GetSize());
+		vulkan->setVertexBuffer(vertexBuffer.GetVkBuffer());
+		vulkan->setIndexBuffer(indexBuffer.GetVkBuffer(), indexBuffer.GetSize());
 
 		Rendering::PushConstantData push;
 		push.transform = transform->getMatrix();
 
-		Rendering::VulkanGraphicEngine::ms_Instance->setPushConstant(push);
-		Rendering::VulkanGraphicEngine::ms_Instance->drawFrame();
+		vulkan->setPushConstant(push);
+		vulkan->drawFrame();
 	}
 
 	void MeshRenderer::setMesh(Rendering::Mesh* mesh)
