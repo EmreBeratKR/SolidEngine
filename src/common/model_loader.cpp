@@ -36,14 +36,11 @@ namespace Engine::IO
                 auto vx = attrib.vertices[3 * index.vertex_index + 0];
                 auto vy = attrib.vertices[3 * index.vertex_index + 1];
                 auto vz = attrib.vertices[3 * index.vertex_index + 2];
-
-                vertex.position = {vx, vy, vz};
-
                 auto tx = attrib.texcoords[2 * index.texcoord_index + 0];
                 auto ty = 1.0f - attrib.texcoords[2 * index.texcoord_index + 1];
 
+                vertex.position = {vx, vy, vz};
                 vertex.texCoord = {tx, ty};
-
                 vertex.color = { 1.0f, 1.0f, 1.0f };
 
                 if (uniqueVertices.count(vertex) == 0) 
