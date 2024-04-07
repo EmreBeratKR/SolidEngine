@@ -1,12 +1,15 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#ifndef IGNORE_BY_INTELLISENSE
 #define STB_IMAGE_IMPLEMENTATION
+#endif
 
 
 #include <chrono>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <stb_image.h>
+#include <string.h>
 
 
 #include "model_loader.h"
@@ -250,9 +253,7 @@ namespace Engine::Rendering
                 vkDestroyFence(logicalDevice, inFlightFences[i], nullptr);
             }          
 
-            //vkDestroyDescriptorPool(logicalDevice, descriptorPool, nullptr);
             descriptorPool->~VulkanDescriptorPool();
-            //vkDestroyDescriptorSetLayout(logicalDevice, descriptorSetLayout, nullptr);                        
             descriptorSetLayout->~VulkanDescriptorSetLayout();
 
             vkDestroyBuffer(logicalDevice, vertexBuffer, nullptr);
