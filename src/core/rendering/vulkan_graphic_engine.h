@@ -2,6 +2,7 @@
 
 #define GLFW_INCLUDE_VULKAN
 
+
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <optional>
@@ -15,6 +16,7 @@
 #include "application.h"
 #include "vertex.h"
 #include "push_constant_data.h"
+#include "vulkan_descriptors.h"
 #include "transform.h"
 #include "layer.h"
 
@@ -93,8 +95,8 @@ namespace Engine::Rendering
         std::vector<uint32_t> indices;
         std::size_t indexBufferSize;
 
-        VkDescriptorSetLayout descriptorSetLayout;
-        VkDescriptorPool descriptorPool;
+        VulkanDescriptorSetLayout* descriptorSetLayout;
+        VulkanDescriptorPool* descriptorPool;
         std::vector<VkDescriptorSet> descriptorSets;
 
         std::vector<VkBuffer> uniformBuffers;
@@ -142,7 +144,6 @@ namespace Engine::Rendering
         void createImage(uint32_t width, uint32_t height, uint32_t mipLevels, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
         void endSingleTimeCommands(VkCommandBuffer commandBuffer);
         void transitionImageLayout(VkImage image, VkFormat format, VkImageAspectFlags aspectMask, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
-        void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
         void createTextureSampler();
         void createDepthResources();
         VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
@@ -161,7 +162,6 @@ namespace Engine::Rendering
         std::vector<const char*> getRequiredExtensions();
         bool checkValidationLayerSupport();
         uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
-        void generateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels);
 
         static std::vector<char> readFile(const std::string& filename);
 
@@ -180,6 +180,8 @@ namespace Engine::Rendering
         VkResult __stdcall waitIdle();
         void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
         void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+        void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+        void generateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels);
         VkDevice GetLogicalDevice();
 
     public:
