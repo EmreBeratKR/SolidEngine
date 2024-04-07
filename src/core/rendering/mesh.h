@@ -4,13 +4,14 @@
 
 
 #include "vertex.h"
+#include "vulkan_buffer.hpp"
 
 
 namespace Engine::Rendering
 {
 	struct Mesh
 	{
-		std::vector<Vertex> vertices;
-		std::vector<uint32_t> indices;
+		VertexBuffer vertexBuffer;
+		IndexBuffer indexBuffer;
 	};
 }

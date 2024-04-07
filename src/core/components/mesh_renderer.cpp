@@ -11,11 +11,11 @@ namespace Engine::Components
 	void MeshRenderer::OnRender()
 	{
 		auto transform = getTransform();
-		auto vertices = mesh->vertices;
-		auto indices = mesh->indices;
+		auto vertexBuffer = mesh->vertexBuffer;
+		auto indexBuffer = mesh->indexBuffer;
 
-		Rendering::VulkanGraphicEngine::ms_Instance->setVertices(vertices);
-		Rendering::VulkanGraphicEngine::ms_Instance->setIndices(indices);
+		Rendering::VulkanGraphicEngine::ms_Instance->setVertexBuffer(vertexBuffer.GetVkBuffer());
+		Rendering::VulkanGraphicEngine::ms_Instance->setIndexBuffer(indexBuffer.GetVkBuffer(), indexBuffer.GetSize());
 
 		Rendering::PushConstantData push;
 		push.transform = transform->getMatrix();

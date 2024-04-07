@@ -91,6 +91,7 @@ namespace Engine::Rendering
         VkBuffer indexBuffer;
         VkDeviceMemory indexBufferMemory;
         std::vector<uint32_t> indices;
+        std::size_t indexBufferSize;
 
         VkDescriptorSetLayout descriptorSetLayout;
         VkDescriptorPool descriptorPool;
@@ -130,9 +131,7 @@ namespace Engine::Rendering
         void createSyncObjects();
         void recreateSwapChain();
         void cleanupSwapChain();
-        void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
         void createVertexBuffer();
-        void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
         void createIndexBuffer();
         void createDescriptorSetLayout();
         void createUniformBuffers();
@@ -171,14 +170,17 @@ namespace Engine::Rendering
         ~VulkanGraphicEngine();
 
     public:
-        void setVertices(std::vector<Vertex> vertices);
-        void setIndices(std::vector<uint32_t> indices);
+        void setVertexBuffer(VkBuffer buffer);
+        void setIndexBuffer(VkBuffer buffer, std::size_t size);
         void setViewAndProjectionMatrices(glm::mat4 view, glm::mat4 proj);
         void setPushConstant(PushConstantData pushConstant);
         void drawFrame();
         VkCommandBuffer beginFrame();
         void endFrame();
         VkResult __stdcall waitIdle();
+        void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+        void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+        VkDevice GetLogicalDevice();
 
     public:
         static VulkanGraphicEngine* ms_Instance;

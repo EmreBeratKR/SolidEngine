@@ -48,11 +48,11 @@ namespace Engine::IO
 
                 if (uniqueVertices.count(vertex) == 0) 
                 {
-                    uniqueVertices[vertex] = static_cast<uint32_t>(mesh.vertices.size());
-                    mesh.vertices.push_back(vertex);
+                    uniqueVertices[vertex] = static_cast<uint32_t>(mesh.vertexBuffer.GetSize());
+                    mesh.vertexBuffer.AddItem(vertex);
                 }
 
-                mesh.indices.push_back(uniqueVertices[vertex]);
+                mesh.indexBuffer.AddItem(uniqueVertices[vertex]);
             }
 
             model->meshes.push_back(mesh);

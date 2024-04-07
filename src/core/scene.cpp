@@ -30,26 +30,45 @@ namespace Engine
 		auto model = IO::loadObj("resources/models/viking_room.obj");
 		auto modelGameObject = new GameObject();
 		auto meshRenderer = new Components::MeshRenderer();
+		auto mesh = &(model->meshes[0]);
 
+		mesh->vertexBuffer.Allocate();
+		mesh->indexBuffer.Allocate();
 		modelGameObject->getTransform()->position = { 0.0f, -2.0f, 0.0f };
 		modelGameObject->getTransform()->rotation = glm::quat(glm::radians(glm::vec3(10.0f, 225.0f, -10.0f)));
+		modelGameObject->getTransform()->scale = { 1.0f, 1.0f, 1.0f };
 		modelGameObject->addComponent(meshRenderer);
-		meshRenderer->setMesh(&model->meshes[0]);
+		meshRenderer->setMesh(mesh);
 
 		// Create Model
 		auto model1 = IO::loadObj("resources/models/torus.obj");
 		auto modelGameObject1 = new GameObject();
 		auto meshRenderer1 = new Components::MeshRenderer();
+		auto mesh1 = &(model1->meshes[0]);
 
+		mesh1->vertexBuffer.Allocate();
+		mesh1->indexBuffer.Allocate();
 		modelGameObject1->getTransform()->position = { 2.0f, -2.0f, 0.0f };
 		modelGameObject1->getTransform()->rotation = glm::quat(glm::radians(glm::vec3(10.0f, 225.0f, -10.0f)));
+		modelGameObject1->getTransform()->scale = { 0.5f, 0.5f, 0.5f };
 		modelGameObject1->addComponent(meshRenderer1);
-		meshRenderer1->setMesh(&model1->meshes[0]);
+		meshRenderer1->setMesh(mesh1);
+
+		auto modelGameObject2 = new GameObject();
+		auto meshRenderer2 = new Components::MeshRenderer();
+		auto mesh2 = mesh;
+		
+		modelGameObject2->getTransform()->position = { -2.0f, -1.0f, 0.0f };
+		modelGameObject2->getTransform()->rotation = glm::quat(glm::radians(glm::vec3(10.0f, 225.0f, -10.0f)));
+		modelGameObject2->getTransform()->scale = { 0.75f, 0.75f, 0.75f };
+		modelGameObject2->addComponent(meshRenderer2);
+		meshRenderer2->setMesh(mesh2);
 
 		// Add GameObjects
 		AddGameObject(cameraGameObject);
 		AddGameObject(modelGameObject);
 		AddGameObject(modelGameObject1);
+		AddGameObject(modelGameObject2);
 	}
 
 	Scene::~Scene()

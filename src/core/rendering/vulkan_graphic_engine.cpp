@@ -31,32 +31,15 @@ namespace Engine::Rendering
         VulkanGraphicEngine* VulkanGraphicEngine::ms_Instance{nullptr};
 
 
-        void VulkanGraphicEngine::setVertices(std::vector<Vertex> vertices)
+        void VulkanGraphicEngine::setVertexBuffer(VkBuffer buffer)
         {
-            auto shouldResize = this->vertices.size() < vertices.size();
-
-            this->vertices = vertices;
-            
-            //if (!shouldResize) return;
-
-            //waitIdle();
-            //vkDestroyBuffer(logicalDevice, vertexBuffer, nullptr);
-            //vkFreeMemory(logicalDevice, vertexBufferMemory, nullptr);
-            createVertexBuffer();
+            vertexBuffer = buffer;
         }
 
-        void VulkanGraphicEngine::setIndices(std::vector<uint32_t> indices)
+        void VulkanGraphicEngine::setIndexBuffer(VkBuffer buffer, std::size_t size)
         {
-            auto shouldResize = this->indices.size() < indices.size();
-
-            this->indices = indices;
-
-            //if (!shouldResize) return;
-
-            //waitIdle();
-            //vkDestroyBuffer(logicalDevice, indexBuffer, nullptr);
-            //vkFreeMemory(logicalDevice, indexBufferMemory, nullptr);
-            createIndexBuffer();
+            indexBuffer = buffer;
+            indexBufferSize = size;
         }
 
         void VulkanGraphicEngine::setViewAndProjectionMatrices(glm::mat4 view, glm::mat4 proj)
@@ -205,11 +188,11 @@ namespace Engine::Rendering
             VkCommandBuffer commandBuffer = commandBuffers[currentFrame];
             VkBuffer vertexBuffers[] = { vertexBuffer };
             VkDeviceSize offsets[] = { 0 };
+
             vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
             vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
-
             vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, nullptr);
-            vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+            vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indexBufferSize), 1, 0, 0, 0);
         }
 
         VkResult __stdcall VulkanGraphicEngine::waitIdle()
@@ -1600,6 +1583,11 @@ namespace Engine::Rendering
             vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
 
             endSingleTimeCommands(commandBuffer);
+        }
+
+        VkDevice VulkanGraphicEngine::GetLogicalDevice()
+        {
+            return logicalDevice;
         }
 
 
