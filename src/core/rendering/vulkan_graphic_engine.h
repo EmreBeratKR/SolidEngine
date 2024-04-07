@@ -17,6 +17,7 @@
 #include "vertex.h"
 #include "push_constant_data.h"
 #include "vulkan_descriptors.h"
+#include "vulkan_texture.fwd.h"
 #include "transform.h"
 #include "layer.h"
 
@@ -103,11 +104,7 @@ namespace Engine::Rendering
         std::vector<VkDeviceMemory> uniformBuffersMemory;
         std::vector<void*> uniformBuffersMapped;
 
-        uint32_t mipLevels;
-        VkImage textureImage;
-        VkImageView textureImageView;
-        VkDeviceMemory textureImageMemory;
-        VkSampler textureSampler;
+        VulkanTexture* texture;
 
         VkImage depthImage;
         VkDeviceMemory depthImageMemory;
@@ -183,6 +180,9 @@ namespace Engine::Rendering
         void transitionImageLayout(VkImage image, VkFormat format, VkImageAspectFlags aspectMask, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t mipLevels);
         void generateMipmaps(VkImage image, VkFormat imageFormat, int32_t texWidth, int32_t texHeight, uint32_t mipLevels);
         VkDevice GetLogicalDevice();
+        VkPhysicalDevice GetPhysicalDevice() const;
+
+        static VulkanGraphicEngine* GetInstance();
 
     public:
         static VulkanGraphicEngine* ms_Instance;
