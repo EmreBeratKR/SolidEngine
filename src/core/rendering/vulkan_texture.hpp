@@ -61,6 +61,8 @@ namespace Engine::Rendering
             vkFreeMemory(logicalDevice, stagingBufferMemory, nullptr);
 
             vulkan->generateMipmaps(texture->image, VK_FORMAT_R8G8B8A8_SRGB, texWidth, texHeight, texture->mipLevels);
+
+            return texture;
         }
     };
 }
