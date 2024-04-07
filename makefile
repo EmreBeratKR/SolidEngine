@@ -9,6 +9,7 @@ VENDORS:= vendors
 
 ifeq ($(OS),Windows_NT)
 	ROOT_DIR = $(shell cd)
+	CLEAR_CONSOLE = cls
 	MK_DIR = powershell -Command "if (!(Test-Path $(1))) {New-Item -Path $(1) -ItemType Directory}"
 	find_dirs = $(1) $(foreach dir,$(wildcard $(1)/*),$(if $(wildcard $(dir)/.),$(call find_dirs,$(dir))))
 	INC_DIRS = $(call find_dirs,$(SRC_DIR))
@@ -25,6 +26,7 @@ ifeq ($(OS),Windows_NT)
 else
 	ROOT_DIR = $(realpath $(shell dirname $(firstword $(MAKEFILE_LIST))))
 	MK_DIR = mkdir -p $(1)
+	CLEAR_CONSOLE = clear
 	INC_DIRS = $(shell find $(SRC_DIR) -type d)
 	INC_DIRS_FLAG = $(addprefix -I$(ROOT_DIR)/,$(INC_DIRS))
 	SRC_FILES = $(shell find $(SRC_DIR) -type f \( -name "*.cpp" \))
@@ -61,18 +63,25 @@ DEBUG_BUILD_PREPROCCESTOR_FLAGS:= -D DEBUG
 
 
 .PHONY: build
-build: compile_shaders
+build: clear_console compile_shaders
 	@$(call MK_DIR,$(RELEASE_BUILD_DIR))
+	@echo [BUILDING PROJECT]
 	@$(CXX) $(COMPILER_FLAGS) $(SRC_FILES) -o $(RELEASE_BUILD_DIR)/$(APP_NAME) $(INCLUDE_FLAGS) $(LINKER_FLAGS) $(PREPROCESSORS)
 	@echo [RELEASE] build successful at [$(RELEASE_BUILD_DIR)/$(APP_NAME)]
 	@$(call EXECUTE,$(RELEASE_BUILD_DIR)/$(APP_NAME))
 
-debug: compile_shaders
+debug: clear_console compile_shaders
 	@$(call MK_DIR,$(DEBUG_BUILD_DIR))
+	@echo [BUILDING PROJECT]
 	@$(CXX) $(COMPILER_FLAGS) $(DEBUG_BUILD_COMPILER_FLAGS) $(SRC_FILES) -o $(DEBUG_BUILD_DIR)/$(APP_NAME) $(INCLUDE_FLAGS) $(LINKER_FLAGS) $(PREPROCESSORS) $(DEBUG_BUILD_PREPROCCESTOR_FLAGS)
 	@echo [DEBUG] build successful at [$(DEBUG_BUILD_DIR)/$(APP_NAME)]
 	@$(call EXECUTE,$(DEBUG_BUILD_DIR)/$(APP_NAME))
 
 compile_shaders:
+	@echo [COMPILING SHADERS]
 	@$(SHADER_COMPILER)
-	@echo shaders are compiled successfully!
+	@echo [SHADERS COMPILED SUCCESSFULLY]
+
+clear_console:
+	@$(CLEAR_CONSOLE)
+	@echo [CONSOLE CLEARED]
