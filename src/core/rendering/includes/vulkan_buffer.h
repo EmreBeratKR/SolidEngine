@@ -13,9 +13,6 @@ namespace Engine::Rendering
     template<typename T>
     class VulkanBuffer
     {
-    public:
-        uint32_t bufferSize;
-
     private:
         VkBuffer buffer;
         VkDeviceMemory memory;
@@ -27,7 +24,7 @@ namespace Engine::Rendering
         void AddItem(T item) { items.push_back(item); }
 
     protected:
-        void AllocateWithUsageFlag(VkBufferUsageFlagBits usageFlag);
+        void AllocateWithUsageFlag(VkBufferUsageFlagBits usageFlag, VkDeviceSize bufferSize);
     };
 
 

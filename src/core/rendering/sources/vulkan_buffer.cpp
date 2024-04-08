@@ -9,14 +9,10 @@
 
 namespace Engine::Rendering
 {
-    template class VulkanBuffer<Vertex>;
-    template class VulkanBuffer<uint32_t>;
-
     template<typename T>
-    void VulkanBuffer<T>::AllocateWithUsageFlag(VkBufferUsageFlagBits usageFlag)
+    void VulkanBuffer<T>::AllocateWithUsageFlag(VkBufferUsageFlagBits usageFlag, VkDeviceSize bufferSize)
     {
         VulkanGraphicEngine* vulkan = VulkanGraphicEngine::GetInstance();
-        VkDeviceSize bufferSize = this->bufferSize;
         VkBuffer stagingBuffer;
         VkDeviceMemory stagingBufferMemory;
         VkDevice device = vulkan->GetLogicalDevice();
@@ -38,14 +34,16 @@ namespace Engine::Rendering
 
     void VertexBuffer::Allocate()
     {
-        bufferSize = sizeof(Vertex) * GetSize();;
-        AllocateWithUsageFlag(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
+        auto bufferSize = sizeof(Vertex) * GetSize();
+
+        AllocateWithUsageFlag(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, bufferSize);
     }
 
 
     void IndexBuffer::Allocate()
     {
-        bufferSize = sizeof(uint32_t) * GetSize();
-        AllocateWithUsageFlag(VK_BUFFER_USAGE_INDEX_BUFFER_BIT);
+        auto bufferSize = sizeof(uint32_t) * GetSize();
+
+        AllocateWithUsageFlag(VK_BUFFER_USAGE_INDEX_BUFFER_BIT, bufferSize);
     }
 }
