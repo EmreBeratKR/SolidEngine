@@ -13,7 +13,7 @@ namespace Engine::Rendering
     template<typename T>
     class VulkanBuffer
     {
-    private:
+    protected:
         VkBuffer buffer;
         VkDeviceMemory memory;
         std::vector<T> items;
@@ -31,12 +31,18 @@ namespace Engine::Rendering
     class VertexBuffer : public VulkanBuffer<Vertex> 
     {
     public:
+        VertexBuffer();
+        ~VertexBuffer();
+
         void Allocate();
     };
 
     class IndexBuffer : public VulkanBuffer<uint32_t> 
     {
     public:
+        IndexBuffer();
+        ~IndexBuffer();
+
         void Allocate();
     };
 }

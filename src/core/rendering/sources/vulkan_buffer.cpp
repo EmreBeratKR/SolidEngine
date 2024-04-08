@@ -32,6 +32,16 @@ namespace Engine::Rendering
     }
 
 
+    VertexBuffer::VertexBuffer()
+    {
+
+    }
+
+    VertexBuffer::~VertexBuffer()
+    {
+        VulkanGraphicEngine::DestroyBuffer(buffer);
+    }
+
     void VertexBuffer::Allocate()
     {
         auto bufferSize = sizeof(Vertex) * GetSize();
@@ -39,6 +49,16 @@ namespace Engine::Rendering
         AllocateWithUsageFlag(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, bufferSize);
     }
 
+
+    IndexBuffer::IndexBuffer()
+    {
+
+    }
+
+    IndexBuffer::~IndexBuffer()
+    {
+        VulkanGraphicEngine::DestroyBuffer(buffer);
+    }
 
     void IndexBuffer::Allocate()
     {

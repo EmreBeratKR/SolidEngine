@@ -1435,6 +1435,11 @@ namespace Engine::Rendering
             return ms_Instance;
         }
 
+        void VulkanGraphicEngine::DestroyBuffer(VkBuffer buffer)
+        {
+            vkDestroyBuffer(GetInstance()->GetLogicalDevice(), buffer, nullptr);
+        }
+
         std::vector<char> VulkanGraphicEngine::readFile(const std::string& filename)
         {
             std::ifstream file(filename, std::ios::ate | std::ios::binary);

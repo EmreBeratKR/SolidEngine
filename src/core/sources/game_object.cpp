@@ -12,7 +12,12 @@ namespace Engine
 
 	GameObject::~GameObject()
 	{
+		delete transform;
 
+		for (const auto& component : components)
+		{
+			delete component;
+		}
 	}
 
 

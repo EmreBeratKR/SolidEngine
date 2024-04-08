@@ -120,16 +120,12 @@ namespace Engine::Rendering
         void createSyncObjects();
         void recreateSwapChain();
         void cleanupSwapChain();
-        void createVertexBuffer();
-        void createIndexBuffer();
         void createDescriptorSetLayout();
         void createUniformBuffers();
         void createDescriptorPool();
         void createDescriptorSets();
         void createTextureImage();
-        void createTextureImageView();
         void endSingleTimeCommands(VkCommandBuffer commandBuffer);
-        void createTextureSampler();
         void createDepthResources();
         VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
         VkFormat findDepthFormat();
@@ -173,6 +169,7 @@ namespace Engine::Rendering
         VkPhysicalDevice GetPhysicalDevice() const;
 
         static VulkanGraphicEngine* GetInstance();
+        static void DestroyBuffer(VkBuffer buffer);
 
 
 #ifdef DEBUG

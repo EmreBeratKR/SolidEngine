@@ -75,7 +75,10 @@ namespace Engine
 
 	Scene::~Scene()
 	{
-
+		for (const auto& gameObject : gameObjects)
+		{
+			delete gameObject;
+		}
 	}
 
 
