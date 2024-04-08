@@ -13,8 +13,6 @@ namespace Engine::Rendering
 {
     void VulkanTexture::CreateImage(const char* path, VkFormat format)
     {
-        auto vulkan = VulkanGraphicEngine::GetInstance();
-
         int texChannels;
         stbi_uc* pixels = stbi_load(path, &width, &height, &texChannels, STBI_rgb_alpha);
         VkDeviceSize imageSize = width * height * 4;
@@ -30,7 +28,7 @@ namespace Engine::Rendering
         VkBuffer stagingBuffer;
         VkDeviceMemory stagingBufferMemory;
 
-        vulkan->createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+        VulkanGraphicEngine::createBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
         void* data;
         vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &data);
@@ -39,10 +37,10 @@ namespace Engine::Rendering
 
         stbi_image_free(pixels);
 
-        vulkan->createImage(width, height, mipLevels, format, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, image, memory);
+        VulkanGraphicEngine::createImage(width, height, mipLevels, format, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, image, memory);
 
-        vulkan->transitionImageLayout(image, format, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipLevels);
-        vulkan->copyBufferToImage(stagingBuffer, image, static_cast<uint32_t>(width), static_cast<uint32_t>(height));
+        VulkanGraphicEngine::transitionImageLayout(image, format, VK_IMAGE_ASPECT_COLOR_BIT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipLevels);
+        VulkanGraphicEngine::copyBufferToImage(stagingBuffer, image, static_cast<uint32_t>(width), static_cast<uint32_t>(height));
 
         vkDestroyBuffer(device, stagingBuffer, nullptr);
         vkFreeMemory(device, stagingBufferMemory, nullptr);
@@ -50,37 +48,18 @@ namespace Engine::Rendering
 
     void VulkanTexture::GenerateMipmaps(VkFormat format)
     {
-        auto vulkan = VulkanGraphicEngine::GetInstance();
-
-        vulkan->generateMipmaps(image, format, width, height, mipLevels);
+        VulkanGraphicEngine::generateMipmaps(image, format, width, height, mipLevels);
     }
 
     void VulkanTexture::CreateImageView(VkFormat format, VkImageAspectFlags aspectFlags)
     {
-        VkImageViewCreateInfo viewInfo{};
-        viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-        viewInfo.image = image;
-        viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-        viewInfo.format = format;
-        viewInfo.subresourceRange.aspectMask = aspectFlags;
-        viewInfo.subresourceRange.baseMipLevel = 0;
-        viewInfo.subresourceRange.levelCount = mipLevels;
-        viewInfo.subresourceRange.baseArrayLayer = 0;
-        viewInfo.subresourceRange.layerCount = 1;
-
-        auto result = vkCreateImageView(device, &viewInfo, nullptr, &imageView);
-
-        if (result != VK_SUCCESS)
-        {
-            Log::ThrowVkResult("failed to create texture image view!", result);
-        }
+        imageView = VulkanGraphicEngine::createImageView(image, format, aspectFlags, mipLevels);
     }
 
     void VulkanTexture::CreateSampler()
     {
-        auto vulkan = VulkanGraphicEngine::GetInstance();
-        auto physicalDevice = vulkan->GetPhysicalDevice();
-        auto logicalDevice = vulkan->GetLogicalDevice();
+        auto physicalDevice = VulkanGraphicEngine::GetPhysicalDevice();
+        auto logicalDevice = VulkanGraphicEngine::GetLogicalDevice();
 
         VkPhysicalDeviceProperties properties{};
         vkGetPhysicalDeviceProperties(physicalDevice, &properties);

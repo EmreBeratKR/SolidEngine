@@ -96,7 +96,7 @@ namespace Engine
 		auto view = camera->getViewMatrix();
 		auto proj = camera->getProjectionMatrix();
 
-		Rendering::VulkanGraphicEngine::GetInstance()->setViewAndProjectionMatrices(view, proj);
+		Rendering::VulkanGraphicEngine::setViewAndProjectionMatrices(view, proj);
 
 		for (const auto& gameObject : gameObjects)
 		{

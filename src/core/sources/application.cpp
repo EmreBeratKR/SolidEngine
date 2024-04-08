@@ -21,18 +21,16 @@ namespace Engine
 
 	void Application::run()
 	{
-		auto vulkan = Rendering::VulkanGraphicEngine::GetInstance();
-
 		while (!shouldClose())
 		{
 			glfwPollEvents();
 			layerStack.OnUpdate();
-			vulkan->beginFrame();
+			Rendering::VulkanGraphicEngine::beginFrame();
 			layerStack.OnRender();
-			vulkan->endFrame();
+			Rendering::VulkanGraphicEngine::endFrame();
 		}
 
-		vulkan->waitIdle();
+		Rendering::VulkanGraphicEngine::waitIdle();
 		close();
 	}
 

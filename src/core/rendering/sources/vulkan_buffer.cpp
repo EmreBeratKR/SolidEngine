@@ -12,20 +12,19 @@ namespace Engine::Rendering
     template<typename T>
     void VulkanBuffer<T>::AllocateWithUsageFlag(VkBufferUsageFlagBits usageFlag, VkDeviceSize bufferSize)
     {
-        VulkanGraphicEngine* vulkan = VulkanGraphicEngine::GetInstance();
         VkBuffer stagingBuffer;
         VkDeviceMemory stagingBufferMemory;
-        VkDevice device = vulkan->GetLogicalDevice();
+        VkDevice device = VulkanGraphicEngine::GetLogicalDevice();
 
-        vulkan->createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+        VulkanGraphicEngine::createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
 
         void* data;
         vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
         memcpy(data, items.data(), (size_t)bufferSize);
         vkUnmapMemory(device, stagingBufferMemory);
 
-        vulkan->createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usageFlag, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, buffer, memory);
-        vulkan->copyBuffer(stagingBuffer, buffer, bufferSize);
+        VulkanGraphicEngine::createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | usageFlag, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, buffer, memory);
+        VulkanGraphicEngine::copyBuffer(stagingBuffer, buffer, bufferSize);
 
         vkDestroyBuffer(device, stagingBuffer, nullptr);
         vkFreeMemory(device, stagingBufferMemory, nullptr);
