@@ -11,6 +11,7 @@
 #include "model.h"
 #include "vulkan_buffer.h"
 #include "vulkan_graphic_engine.h"
+#include "time_api.h"
 
 
 namespace Engine
@@ -88,6 +89,11 @@ namespace Engine
 		{
 			gameObject->OnUpdate();
 		}
+
+		auto transform = gameObjects[1]->getTransform();
+		auto position = transform->position;
+
+		transform->position = { position.x, position.y + TimeAPI::DeltaTime() * 0.50f, position.z };
 	}
 
 	void Scene::OnRender()

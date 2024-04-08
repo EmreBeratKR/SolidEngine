@@ -5,16 +5,19 @@
 #include "vulkan_graphic_engine.h"
 #include "scene_manager.h"
 #include "scene.h"
+#include "time_api.h"
 
 
 int main() 
 {
+    Engine::TimeAPI timeApi;
     Engine::Application application{600, 600, "Game Engine"};
     Engine::Rendering::VulkanGraphicEngine graphicEngine{&application};
-    Engine::SceneManager sceneManager{};
+    Engine::SceneManager sceneManager;
 
     Engine::Scene scene;
 
+    application.PushLayer(&timeApi);
     application.PushLayer(&sceneManager);
     application.run();
 
