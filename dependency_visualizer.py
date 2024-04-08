@@ -69,7 +69,7 @@ def visualize_dependencies(directory, font_size=10):
     max_usage = max(usage_count.values())
     color_map = {file: cmap(usage_count[file] / max_usage) for file in G.nodes()}
     
-    plt.figure(figsize=(10, 8))
+    plt.figure(figsize=(10, 8), num=TITLE)
 
     title = TITLE
 
