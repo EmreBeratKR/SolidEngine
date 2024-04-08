@@ -3,7 +3,7 @@
 #include <tiny_obj_loader.h>
 
 
-#include "model.h"
+#include "fwd.h"
 
 
 namespace Engine::IO

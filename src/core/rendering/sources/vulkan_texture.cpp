@@ -3,8 +3,9 @@
 #include <cmath>
 
 
-#include "vulkan_graphic_engine.fwd.h"
+#include "application.h"
 #include "vulkan_texture.h"
+#include "vulkan_graphic_engine.h"
 #include "log.h"
 
 

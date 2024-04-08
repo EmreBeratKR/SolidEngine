@@ -10,12 +10,17 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <stb_image.h>
 #include <string.h>
+#include <array>
 
 
-#include "model_loader.h"
 #include "vulkan_graphic_engine.h"
+#include "application.h"
+#include "vulkan_buffer.h"
+#include "vulkan_texture.h"
 #include "uniform_buffer_object.h"
-#include "camera.h"
+#include "push_constant_data.h"
+#include "vulkan_descriptors.h"
+#include "vertex.h"
 #include "log.h"
 
 
@@ -35,15 +40,14 @@ namespace Engine::Rendering
         VulkanGraphicEngine* VulkanGraphicEngine::ms_Instance{nullptr};
 
 
-        void VulkanGraphicEngine::setVertexBuffer(VkBuffer buffer)
+        void VulkanGraphicEngine::setVertexBuffer(VertexBuffer* buffer)
         {
             vertexBuffer = buffer;
         }
 
-        void VulkanGraphicEngine::setIndexBuffer(VkBuffer buffer, std::size_t size)
+        void VulkanGraphicEngine::setIndexBuffer(IndexBuffer* buffer)
         {
             indexBuffer = buffer;
-            indexBufferSize = size;
         }
 
         void VulkanGraphicEngine::setViewAndProjectionMatrices(glm::mat4 view, glm::mat4 proj)
@@ -190,13 +194,13 @@ namespace Engine::Rendering
         void VulkanGraphicEngine::drawFrame()
         {
             VkCommandBuffer commandBuffer = commandBuffers[currentFrame];
-            VkBuffer vertexBuffers[] = { vertexBuffer };
+            VkBuffer vertexBuffers[] = { vertexBuffer->GetVkBuffer() };
             VkDeviceSize offsets[] = { 0 };
 
             vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
-            vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+            vkCmdBindIndexBuffer(commandBuffer, indexBuffer->GetVkBuffer(), 0, VK_INDEX_TYPE_UINT32);
             vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[currentFrame], 0, nullptr);
-            vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indexBufferSize), 1, 0, 0, 0);
+            vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indexBuffer->GetSize()), 1, 0, 0, 0);
         }
 
         VkResult __stdcall VulkanGraphicEngine::waitIdle()
@@ -253,13 +257,7 @@ namespace Engine::Rendering
             }          
 
             descriptorPool->~VulkanDescriptorPool();
-            descriptorSetLayout->~VulkanDescriptorSetLayout();
-
-            vkDestroyBuffer(logicalDevice, vertexBuffer, nullptr);
-            vkFreeMemory(logicalDevice, vertexBufferMemory, nullptr);
-
-            vkDestroyBuffer(logicalDevice, indexBuffer, nullptr);
-            vkFreeMemory(logicalDevice, indexBufferMemory, nullptr);           
+            descriptorSetLayout->~VulkanDescriptorSetLayout();          
 
             for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) 
             {
@@ -830,27 +828,6 @@ namespace Engine::Rendering
             vkBindBufferMemory(logicalDevice, buffer, bufferMemory, 0);
         }
 
-        void VulkanGraphicEngine::createVertexBuffer()
-        {
-            VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
-
-            VkBuffer stagingBuffer;
-            VkDeviceMemory stagingBufferMemory;
-            createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-
-            void* data;
-            vkMapMemory(logicalDevice, stagingBufferMemory, 0, bufferSize, 0, &data);
-            memcpy(data, vertices.data(), (size_t)bufferSize);
-            vkUnmapMemory(logicalDevice, stagingBufferMemory);
-
-            createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
-
-            copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
-
-            vkDestroyBuffer(logicalDevice, stagingBuffer, nullptr);
-            vkFreeMemory(logicalDevice, stagingBufferMemory, nullptr);
-        }
-
         void VulkanGraphicEngine::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
         {
             VkCommandBuffer commandBuffer = beginSingleTimeCommands();
@@ -862,27 +839,6 @@ namespace Engine::Rendering
             vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
 
             endSingleTimeCommands(commandBuffer);
-        }
-
-        void VulkanGraphicEngine::createIndexBuffer()
-        {
-            VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
-
-            VkBuffer stagingBuffer;
-            VkDeviceMemory stagingBufferMemory;
-            createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-
-            void* data;
-            vkMapMemory(logicalDevice, stagingBufferMemory, 0, bufferSize, 0, &data);
-            memcpy(data, indices.data(), (size_t)bufferSize);
-            vkUnmapMemory(logicalDevice, stagingBufferMemory);
-
-            createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
-
-            copyBuffer(stagingBuffer, indexBuffer, bufferSize);
-
-            vkDestroyBuffer(logicalDevice, stagingBuffer, nullptr);
-            vkFreeMemory(logicalDevice, stagingBufferMemory, nullptr);
         }
 
         void VulkanGraphicEngine::createDescriptorSetLayout()

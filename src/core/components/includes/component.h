@@ -1,8 +1,8 @@
 #pragma once
 
-#include "game_object.fwd.h"
-#include "transform.fwd.h"
+
 #include "object.h"
+#include "fwd.h"
 
 
 namespace Engine::Components

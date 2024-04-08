@@ -10,6 +10,9 @@ namespace Engine::Rendering
 {
 	struct Model
 	{
-		std::vector<Mesh> meshes{};
+		std::vector<Mesh*> meshes{};
+
+		Model();
+		~Model();
 	};
 }

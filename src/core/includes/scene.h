@@ -1,7 +1,10 @@
 #pragma once
 
 
-#include "game_object.h"
+#include <vector>
+
+
+#include "fwd.h"
 
 
 namespace Engine

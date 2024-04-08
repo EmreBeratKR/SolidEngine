@@ -1,9 +1,9 @@
 #pragma once
 
-#define GLFW_INCLUDE_VULKAN
 
-
+#include <vulkan/vulkan.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 #include <vector>
 #include <optional>
 #include <iostream>
@@ -13,13 +13,7 @@
 #include <set>
 
 
-#include "application.h"
-#include "vertex.h"
-#include "push_constant_data.h"
-#include "vulkan_descriptors.h"
-#include "vulkan_texture.fwd.h"
-#include "transform.h"
-#include "layer.h"
+#include "fwd.h"
 
 
 namespace Engine::Rendering
@@ -89,14 +83,8 @@ namespace Engine::Rendering
         std::vector<VkSemaphore> renderFinishedSemaphores;
         std::vector<VkFence> inFlightFences;
 
-        VkBuffer vertexBuffer;
-        VkDeviceMemory vertexBufferMemory;
-        std::vector<Vertex> vertices;
-
-        VkBuffer indexBuffer;
-        VkDeviceMemory indexBufferMemory;
-        std::vector<uint32_t> indices;
-        std::size_t indexBufferSize;
+        VertexBuffer* vertexBuffer;
+        IndexBuffer* indexBuffer;
 
         VulkanDescriptorSetLayout* descriptorSetLayout;
         VulkanDescriptorPool* descriptorPool;
@@ -167,8 +155,8 @@ namespace Engine::Rendering
         ~VulkanGraphicEngine();
 
     public:
-        void setVertexBuffer(VkBuffer buffer);
-        void setIndexBuffer(VkBuffer buffer, std::size_t size);
+        void setVertexBuffer(VertexBuffer* buffer);
+        void setIndexBuffer(IndexBuffer* buffer);
         void setViewAndProjectionMatrices(glm::mat4 view, glm::mat4 proj);
         void setPushConstant(PushConstantData pushConstant);
         void drawFrame();

@@ -1,9 +1,11 @@
 #include <iostream>
 
 
-#include "vulkan_graphic_engine.h"
-#include "push_constant_data.h"
 #include "mesh_renderer.h"
+#include "mesh.h"
+#include "push_constant_data.h"
+#include "transform.h"
+#include "vulkan_graphic_engine.h"
 
 
 namespace Engine::Components
@@ -15,8 +17,8 @@ namespace Engine::Components
 		auto vertexBuffer = mesh->vertexBuffer;
 		auto indexBuffer = mesh->indexBuffer;
 
-		vulkan->setVertexBuffer(vertexBuffer.GetVkBuffer());
-		vulkan->setIndexBuffer(indexBuffer.GetVkBuffer(), indexBuffer.GetSize());
+		vulkan->setVertexBuffer(vertexBuffer);
+		vulkan->setIndexBuffer(indexBuffer);
 
 		Rendering::PushConstantData push;
 		push.transform = transform->getMatrix();

@@ -3,9 +3,8 @@
 #include <vector>
 
 
-#include "transform.fwd.h"
-#include "component.h"
 #include "object.h"
+#include "fwd.h"
 
 
 namespace Engine

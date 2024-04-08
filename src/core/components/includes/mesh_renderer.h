@@ -2,7 +2,6 @@
 
 
 #include "component.h"
-#include "mesh.h"
 
 
 namespace Engine::Components

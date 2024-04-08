@@ -4,7 +4,7 @@
 #include <vector>
 
 
-#include "layer.h"
+#include "fwd.h"
 
 
 namespace Engine

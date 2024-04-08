@@ -5,6 +5,9 @@
 
 
 #include "model_loader.h"
+#include "model.h"
+#include "vertex.h"
+#include "vulkan_buffer.h"
 
 
 namespace Engine::IO
@@ -26,7 +29,7 @@ namespace Engine::IO
 
         for (const auto& shape : shapes) 
         {
-            Rendering::Mesh mesh{};
+            Rendering::Mesh* mesh = new Rendering::Mesh();
             std::unordered_map<Rendering::Vertex, uint32_t> uniqueVertices{};
 
             for (const auto& index : shape.mesh.indices) 
@@ -45,16 +48,16 @@ namespace Engine::IO
 
                 if (uniqueVertices.count(vertex) == 0) 
                 {
-                    uniqueVertices[vertex] = static_cast<uint32_t>(mesh.vertexBuffer.GetSize());
-                    mesh.vertexBuffer.AddItem(vertex);
+                    uniqueVertices[vertex] = static_cast<uint32_t>(mesh->vertexBuffer->GetSize());
+                    mesh->vertexBuffer->AddItem(vertex);
                 }
 
-                mesh.indexBuffer.AddItem(uniqueVertices[vertex]);
+                mesh->indexBuffer->AddItem(uniqueVertices[vertex]);
             }
 
             model->meshes.push_back(mesh);
-
-            return model;
         }
+
+        return model;
 	}
 }

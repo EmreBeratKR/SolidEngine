@@ -2,6 +2,7 @@
 
 
 #include "layer_stack.h"
+#include "layer.h"
 
 
 namespace Engine

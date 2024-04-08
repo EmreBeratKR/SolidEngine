@@ -1,13 +1,15 @@
 #include <iostream>
 
 
-#include "scene.h"
 #include "scene_manager.h"
+#include "scene.h"
 #include "game_object.h"
-#include "transform.h"
 #include "camera.h"
+#include "transform.h"
 #include "mesh_renderer.h"
 #include "model_loader.h"
+#include "model.h"
+#include "vulkan_buffer.h"
 #include "vulkan_graphic_engine.h"
 
 
@@ -30,10 +32,10 @@ namespace Engine
 		auto model = IO::loadObj("resources/models/viking_room.obj");
 		auto modelGameObject = new GameObject();
 		auto meshRenderer = new Components::MeshRenderer();
-		auto mesh = &(model->meshes[0]);
+		auto mesh = model->meshes[0];
 
-		mesh->vertexBuffer.Allocate();
-		mesh->indexBuffer.Allocate();
+		mesh->vertexBuffer->Allocate();
+		mesh->indexBuffer->Allocate();
 		modelGameObject->getTransform()->position = { 0.0f, -2.0f, 0.0f };
 		modelGameObject->getTransform()->rotation = glm::quat(glm::radians(glm::vec3(10.0f, 225.0f, -10.0f)));
 		modelGameObject->getTransform()->scale = { 1.0f, 1.0f, 1.0f };
@@ -44,10 +46,10 @@ namespace Engine
 		auto model1 = IO::loadObj("resources/models/torus.obj");
 		auto modelGameObject1 = new GameObject();
 		auto meshRenderer1 = new Components::MeshRenderer();
-		auto mesh1 = &(model1->meshes[0]);
+		auto mesh1 = model1->meshes[0];
 
-		mesh1->vertexBuffer.Allocate();
-		mesh1->indexBuffer.Allocate();
+		mesh1->vertexBuffer->Allocate();
+		mesh1->indexBuffer->Allocate();
 		modelGameObject1->getTransform()->position = { 2.0f, -2.0f, 0.0f };
 		modelGameObject1->getTransform()->rotation = glm::quat(glm::radians(glm::vec3(10.0f, 225.0f, -10.0f)));
 		modelGameObject1->getTransform()->scale = { 0.5f, 0.5f, 0.5f };

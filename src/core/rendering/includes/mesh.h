@@ -3,15 +3,18 @@
 #include <vector>
 
 
-#include "vertex.h"
-#include "vulkan_buffer.hpp"
+#include "fwd.h"
 
 
 namespace Engine::Rendering
 {
 	struct Mesh
 	{
-		VertexBuffer vertexBuffer;
-		IndexBuffer indexBuffer;
+		VertexBuffer* vertexBuffer;
+		IndexBuffer* indexBuffer;
+		
+
+		Mesh();
+		~Mesh();
 	};
 }
