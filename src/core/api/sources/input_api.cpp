@@ -38,4 +38,15 @@ namespace Engine
 
         return currentState == GLFW_RELEASE && previousState != GLFW_RELEASE;
     }
+
+
+    int InputAPI::GetMouseX()
+    {
+        return Application::GetMouseX();
+    }
+
+    int InputAPI::GetMouseY()
+    {
+        return Application::GetMouseY();
+    }
 }

@@ -6,6 +6,8 @@ namespace Engine
 {
 	static std::unordered_map<int, int> ms_CurrentKeyStates;
 	static std::unordered_map<int, int> ms_PreviousKeyStates;
+	static double ms_MouseX;
+	static double ms_MouseY;
 
 
 	Application::Application(int width, int height, std::string title)
@@ -28,6 +30,8 @@ namespace Engine
 		while (!shouldClose())
 		{
 			glfwPollEvents();
+			glfwGetCursorPos(m_Window, &ms_MouseX, &ms_MouseY);
+			ms_MouseY = height - ms_MouseY;
 			layerStack.OnUpdate();
 			Rendering::VulkanGraphicEngine::beginFrame();
 			layerStack.OnRender();
@@ -80,7 +84,7 @@ namespace Engine
             ms_CurrentKeyStates[key] = glfwGetKey(m_Window, key);
         }
 
-		glfwSetKeyCallback(m_Window, SetKeyCallback);
+		glfwSetKeyCallback(m_Window, KeyCallback);
 		glfwSetFramebufferSizeCallback(m_Window, framebufferResizeCallback);
 	}
 
@@ -106,8 +110,18 @@ namespace Engine
 		return ms_PreviousKeyStates[key];
 	}
 
+	int Application::GetMouseX()
+	{
+		return ms_MouseX;
+	}
 
-	void Application::SetKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	int Application::GetMouseY()
+	{
+		return ms_MouseY;
+	}
+
+
+	void Application::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
 		ms_CurrentKeyStates[key] = action;
 	}

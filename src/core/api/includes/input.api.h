@@ -20,5 +20,8 @@ namespace Engine
         static bool GetKeyDown(KeyCode keyCode);
         static bool GetKey(KeyCode keyCode);
         static bool GetKeyUp(KeyCode keyCode);
+
+        static int GetMouseX();
+        static int GetMouseY();
     };
 }

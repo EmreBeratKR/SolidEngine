@@ -31,7 +31,7 @@ namespace Engine
 		bool shouldClose();
 		void close();
 
-		static void SetKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+		static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 		static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 
 	public:
@@ -49,5 +49,7 @@ namespace Engine
 
 		static int GetKeyCurrentState(int key);
 		static int GetKeyPreviousState(int key);
+		static int GetMouseX();
+		static int GetMouseY();
 	};
 }

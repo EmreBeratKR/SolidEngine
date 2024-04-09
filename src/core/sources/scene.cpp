@@ -128,6 +128,8 @@ namespace Engine
 
 		transform->position = position + deltaPosition * (float) TimeAPI::DeltaTime() * 2.0f;
 		transform->scale = scale;
+
+		gameObjects[2]->getTransform()->position = { (InputAPI::GetMouseX() - 300) * 0.01f, (InputAPI::GetMouseY() - 300) * 0.01f, 0.0f };
 	}
 
 	void Scene::OnRender()
