@@ -36,7 +36,7 @@ namespace Engine
 			glfwPollEvents();
 			auto previousMouseX = ms_MouseX;
 			auto previousMouseY = ms_MouseY;
-			GetCurrentMousePosition(&ms_MouseX, &ms_MouseY);
+			getCurrentMousePosition(&ms_MouseX, &ms_MouseY);
 			ms_MouseDeltaX = ms_MouseX - previousMouseX;
 			ms_MouseDeltaY = ms_MouseY - previousMouseY;
 			layerStack.OnUpdate();
@@ -79,18 +79,37 @@ namespace Engine
 		framebufferResized = value;
 	}
 
+	void Application::pushLayer(Layer* layer)
+	{
+		layerStack.PushLayer(layer);
+	}
+
+	void Application::popLayer(Layer* layer)
+	{
+		layerStack.PopLayer(layer);
+	}
+
 
 	void Application::init()
 	{
 		instance = this;
 
+		initWindow();
+		initInputs();
+	}
+
+	void Application::initWindow()
+	{
 		glfwInit();
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
 		aspectRatio = (float) width / height;
 		m_Window = glfwCreateWindow(width, height, TITLE.c_str(), nullptr, nullptr);
 		glfwSetWindowUserPointer(m_Window, this);
+	}
 
+	void Application::initInputs()
+	{
 		for (int key = GLFW_KEY_SPACE; key <= GLFW_KEY_LAST; key++) 
 		{
             ms_CurrentKeyStates[key] = glfwGetKey(m_Window, key);
@@ -101,11 +120,11 @@ namespace Engine
 			ms_CurrentMouseButtonStates[button] = glfwGetMouseButton(m_Window, button);
 		}
 
-		GetCurrentMousePosition(&ms_MouseX, &ms_MouseY);
+		getCurrentMousePosition(&ms_MouseX, &ms_MouseY);
 
-		glfwSetKeyCallback(m_Window, KeyCallback);
-		glfwSetMouseButtonCallback(m_Window, MouseButtonCallback);
-		glfwSetFramebufferSizeCallback(m_Window, framebufferResizeCallback);
+		glfwSetKeyCallback(m_Window, onKeyCallback);
+		glfwSetMouseButtonCallback(m_Window, onMouseButtonCallback);
+		glfwSetFramebufferSizeCallback(m_Window, onFrameBufferResizeCallback);
 	}
 
 	bool Application::shouldClose()
@@ -119,64 +138,64 @@ namespace Engine
 		glfwTerminate();
 	}
 
-	void Application::GetCurrentMousePosition(double* x, double* y)
+	void Application::getCurrentMousePosition(double* x, double* y)
 	{
 		glfwGetCursorPos(m_Window, x, y);
 		*y = height - *y;
 	}
 
 
-	int Application::GetKeyCurrentState(int key)
+	int Application::getKeyCurrentState(int key)
 	{
 		return ms_CurrentKeyStates[key];
 	}
 
-	int Application::GetKeyPreviousState(int key)
+	int Application::getKeyPreviousState(int key)
 	{
 		return ms_PreviousKeyStates[key];
 	}
 
-	int Application::GetMouseButtonCurrentState(int button)
+	int Application::getMouseButtonCurrentState(int button)
 	{
 		return ms_CurrentMouseButtonStates[button];
 	}
 
-	int Application::GetMouseButtonPreviousState(int button)
+	int Application::getMouseButtonPreviousState(int button)
 	{
 		return ms_PreviousMouseButtonStates[button];
 	}
 
-	int Application::GetMouseX()
+	int Application::getMouseX()
 	{
 		return ms_MouseX;
 	}
 
-	int Application::GetMouseY()
+	int Application::getMouseY()
 	{
 		return ms_MouseY;
 	}
 
-	int Application::GetMouseDeltaX()
+	int Application::getMouseDeltaX()
 	{
 		return ms_MouseDeltaX;
 	}
 
-	int Application::GetMouseDeltaY()
+	int Application::getMouseDeltaY()
 	{
 		return ms_MouseDeltaY;
 	}
 
-	void Application::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	void Application::onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
 		ms_CurrentKeyStates[key] = action;
 	}
 
-	void Application::MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+	void Application::onMouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 	{
 		ms_CurrentMouseButtonStates[button] = action;
 	}
 
-	void Application::framebufferResizeCallback(GLFWwindow* window, int width, int height)
+	void Application::onFrameBufferResizeCallback(GLFWwindow* window, int width, int height)
 	{
 		auto app = reinterpret_cast<Application*>(glfwGetWindowUserPointer(window));
 
@@ -184,15 +203,5 @@ namespace Engine
 		app->width = width;
 		app->height = height;
 		app->framebufferResized = true;
-	}
-
-	void Application::PushLayer(Layer* layer)
-	{
-		layerStack.PushLayer(layer);
-	}
-
-	void Application::PopLayer(Layer* layer)
-	{
-		layerStack.PopLayer(layer);
 	}
 }

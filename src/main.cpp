@@ -17,8 +17,8 @@ int main()
 
     Engine::Scene scene;
 
-    application.PushLayer(&timeApi);
-    application.PushLayer(&sceneManager);
+    application.pushLayer(&timeApi);
+    application.pushLayer(&sceneManager);
     application.run();
 
     return EXIT_SUCCESS;

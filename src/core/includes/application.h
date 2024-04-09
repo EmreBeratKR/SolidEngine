@@ -28,13 +28,15 @@ namespace Engine
 
 	private:
 		void init();
+		void initWindow();
+		void initInputs();
 		bool shouldClose();
 		void close();
-		void GetCurrentMousePosition(double* x, double* y);
+		void getCurrentMousePosition(double* x, double* y);
 
-		static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-		static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-		static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
+		static void onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+		static void onMouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
+		static void onFrameBufferResizeCallback(GLFWwindow* window, int width, int height);
 
 	public:
 		Application(int width, int height, std::string title);
@@ -46,16 +48,16 @@ namespace Engine
 		float getAspectRatio();
 		bool getFrameBufferResized();
 		void setFrameBufferResized(bool value);
-		void PushLayer(Layer* layer);
-		void PopLayer(Layer* layer);
+		void pushLayer(Layer* layer);
+		void popLayer(Layer* layer);
 
-		static int GetKeyCurrentState(int key);
-		static int GetKeyPreviousState(int key);
-		static int GetMouseButtonCurrentState(int key);
-		static int GetMouseButtonPreviousState(int key);
-		static int GetMouseX();
-		static int GetMouseY();
-		static int GetMouseDeltaX();
-		static int GetMouseDeltaY();
+		static int getKeyCurrentState(int key);
+		static int getKeyPreviousState(int key);
+		static int getMouseButtonCurrentState(int key);
+		static int getMouseButtonPreviousState(int key);
+		static int getMouseX();
+		static int getMouseY();
+		static int getMouseDeltaX();
+		static int getMouseDeltaY();
 	};
 }

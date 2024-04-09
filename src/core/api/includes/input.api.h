@@ -12,22 +12,17 @@ namespace Engine
 {
     class InputAPI
     {
-    private:
-        GLFWwindow* m_Window;
-    
     public:
-        InputAPI(GLFWwindow* window);
+        static bool getKeyDown(KeyCode keyCode);
+        static bool getKey(KeyCode keyCode);
+        static bool getKeyUp(KeyCode keyCode);
 
-        static bool GetKeyDown(KeyCode keyCode);
-        static bool GetKey(KeyCode keyCode);
-        static bool GetKeyUp(KeyCode keyCode);
-
-        static bool GetMouseButtonDown(MouseButton keyCode);
-        static bool GetMouseButton(MouseButton keyCode);
-        static bool GetMouseButtonUp(MouseButton keyCode);
-        static int GetMouseX();
-        static int GetMouseY();
-        static int GetMouseDeltaX();
-        static int GetMouseDeltaY();
+        static bool getMouseButtonDown(MouseButton keyCode);
+        static bool getMouseButton(MouseButton keyCode);
+        static bool getMouseButtonUp(MouseButton keyCode);
+        static int getMouseX();
+        static int getMouseY();
+        static int getMouseDeltaX();
+        static int getMouseDeltaY();
     };
 }

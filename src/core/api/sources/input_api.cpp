@@ -4,12 +4,6 @@
 
 namespace Engine
 {
-    InputAPI::InputAPI(GLFWwindow* window)
-    {
-        this->m_Window = window;
-    }
-
-
     static bool IsDown(int previousState, int currentState)
     {
         return currentState == GLFW_PRESS && previousState != GLFW_PRESS;
@@ -28,78 +22,78 @@ namespace Engine
     }
 
 
-    bool InputAPI::GetKeyDown(KeyCode keycode)
+    bool InputAPI::getKeyDown(KeyCode keycode)
     {
         auto intKeyCode = (int) keycode;
-        auto previousState = Application::GetKeyPreviousState(intKeyCode);
-        auto currentState = Application::GetKeyCurrentState(intKeyCode);
+        auto previousState = Application::getKeyPreviousState(intKeyCode);
+        auto currentState = Application::getKeyCurrentState(intKeyCode);
 
         return IsDown(previousState, currentState);
     }
 
-    bool InputAPI::GetKey(KeyCode keycode)
+    bool InputAPI::getKey(KeyCode keycode)
     {
         auto intKeyCode = (int) keycode;
-        auto previousState = Application::GetKeyPreviousState(intKeyCode);
-        auto currentState = Application::GetKeyCurrentState(intKeyCode);
+        auto previousState = Application::getKeyPreviousState(intKeyCode);
+        auto currentState = Application::getKeyCurrentState(intKeyCode);
 
         return IsHold(previousState, currentState);
     }
 
-    bool InputAPI::GetKeyUp(KeyCode keycode)
+    bool InputAPI::getKeyUp(KeyCode keycode)
     {
         auto intKeyCode = (int) keycode;
-        auto previousState = Application::GetKeyPreviousState(intKeyCode);
-        auto currentState = Application::GetKeyCurrentState(intKeyCode);
-
+        auto previousState = Application::getKeyPreviousState(intKeyCode);
+        auto currentState = Application::getKeyCurrentState(intKeyCode);
+        
         return IsUp(previousState, currentState);
     }
 
 
-    bool InputAPI::GetMouseButtonDown(MouseButton mouseButton)
+    bool InputAPI::getMouseButtonDown(MouseButton mouseButton)
     {
         auto intMouseButton = (int) mouseButton;
-        auto previousState = Application::GetMouseButtonPreviousState(intMouseButton);
-        auto currentState = Application::GetMouseButtonCurrentState(intMouseButton);
+        auto previousState = Application::getMouseButtonPreviousState(intMouseButton);
+        auto currentState = Application::getMouseButtonCurrentState(intMouseButton);
 
         return IsDown(previousState, currentState);
     }
 
-    bool InputAPI::GetMouseButton(MouseButton mouseButton)
+    bool InputAPI::getMouseButton(MouseButton mouseButton)
     {
         auto intMouseButton = (int) mouseButton;
-        auto previousState = Application::GetMouseButtonPreviousState(intMouseButton);
-        auto currentState = Application::GetMouseButtonCurrentState(intMouseButton);
+        auto previousState = Application::getMouseButtonPreviousState(intMouseButton);
+        auto currentState = Application::getMouseButtonCurrentState(intMouseButton);
 
         return IsHold(previousState, currentState);
     }
 
-    bool InputAPI::GetMouseButtonUp(MouseButton mouseButton)
+    bool InputAPI::getMouseButtonUp(MouseButton mouseButton)
     {
         auto intMouseButton = (int) mouseButton;
-        auto previousState = Application::GetMouseButtonPreviousState(intMouseButton);
-        auto currentState = Application::GetMouseButtonCurrentState(intMouseButton);
+        auto previousState = Application::getMouseButtonPreviousState(intMouseButton);
+        auto currentState = Application::getMouseButtonCurrentState(intMouseButton);
 
         return IsUp(previousState, currentState);
     }
 
-    int InputAPI::GetMouseX()
+    int InputAPI::getMouseX()
     {
-        return Application::GetMouseX();
+        return Application::getMouseX();
     }
 
-    int InputAPI::GetMouseY()
+    int InputAPI::getMouseY()
     {
-        return Application::GetMouseY();
+        return Application::getMouseY();
     }
 
-    int InputAPI::GetMouseDeltaX()
+    int InputAPI::getMouseDeltaX()
     {
-        return Application::GetMouseDeltaX();
+        return Application::getMouseDeltaX();
     }
 
-    int InputAPI::GetMouseDeltaY()
+    int InputAPI::getMouseDeltaY()
     {
-        return Application::GetMouseDeltaY();
+        return Application::getMouseDeltaY();
     }
 }

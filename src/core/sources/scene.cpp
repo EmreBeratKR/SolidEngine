@@ -97,42 +97,42 @@ namespace Engine
 		auto scale = transform->scale;
 		auto rotation = transform->rotation;
 
-		if (InputAPI::GetKey(KeyCode::KEY_W))
+		if (InputAPI::getKey(KeyCode::KEY_W))
 		{
 			deltaPosition.y += 1.0f;
 		}
 
-		if (InputAPI::GetKey(KeyCode::KEY_S))
+		if (InputAPI::getKey(KeyCode::KEY_S))
 		{
 			deltaPosition.y -= 1.0f;
 		}
 
-		if (InputAPI::GetKey(KeyCode::KEY_D))
+		if (InputAPI::getKey(KeyCode::KEY_D))
 		{
 			deltaPosition.x += 1.0f;
 		}
 
-		if (InputAPI::GetKey(KeyCode::KEY_A))
+		if (InputAPI::getKey(KeyCode::KEY_A))
 		{
 			deltaPosition.x -= 1.0f;
 		}
 
-		if (InputAPI::GetKeyDown(KeyCode::KEY_UP))
+		if (InputAPI::getKeyDown(KeyCode::KEY_UP))
 		{
 			scale = scale * -1.0f;
 		}
 
-		if (InputAPI::GetKeyUp(KeyCode::KEY_UP))
+		if (InputAPI::getKeyUp(KeyCode::KEY_UP))
 		{
 			scale = scale * -1.0f;
 		}
 
-		if (InputAPI::GetMouseButtonDown(MouseButton::MIDDLE))
+		if (InputAPI::getMouseButtonDown(MouseButton::MIDDLE))
 		{
 			rotation *= glm::quat(glm::radians(glm::vec3(0.0f, 30.0f, 0.0f)));
 		}
 
-		if (InputAPI::GetMouseButtonUp(MouseButton::MIDDLE))
+		if (InputAPI::getMouseButtonUp(MouseButton::MIDDLE))
 		{
 			rotation *= glm::quat(glm::radians(glm::vec3(0.0f, -30.0f, 0.0f)));
 		}
@@ -141,9 +141,9 @@ namespace Engine
 		transform->rotation = rotation;
 		transform->scale = scale;
 
-		gameObjects[2]->getTransform()->position = { (InputAPI::GetMouseX() - 300) * 0.01f, (InputAPI::GetMouseY() - 300) * 0.01f, 0.0f };
+		gameObjects[2]->getTransform()->position = { (InputAPI::getMouseX() - 300) * 0.01f, (InputAPI::getMouseY() - 300) * 0.01f, 0.0f };
 
-		printf("mouse delta: (%d, %d)\n", InputAPI::GetMouseDeltaX(), InputAPI::GetMouseDeltaY());
+		printf("mouse delta: (%d, %d)\n", InputAPI::getMouseDeltaX(), InputAPI::getMouseDeltaY());
 	}
 
 	void Scene::OnRender()
