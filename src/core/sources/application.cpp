@@ -4,6 +4,10 @@
 
 namespace Engine
 {
+	static std::unordered_map<int, int> ms_CurrentKeyStates;
+	static std::unordered_map<int, int> ms_PreviousKeyStates;
+
+
 	Application::Application(int width, int height, std::string title)
 		: width(width), height(height), TITLE(title)
 	{
@@ -28,6 +32,11 @@ namespace Engine
 			Rendering::VulkanGraphicEngine::beginFrame();
 			layerStack.OnRender();
 			Rendering::VulkanGraphicEngine::endFrame();
+
+			for (int key = GLFW_KEY_SPACE; key <= GLFW_KEY_LAST; key++) 
+			{
+				ms_PreviousKeyStates[key] = ms_CurrentKeyStates[key];
+			}
 		}
 
 		Rendering::VulkanGraphicEngine::waitIdle();
@@ -65,6 +74,13 @@ namespace Engine
 		aspectRatio = (float) width / height;
 		m_Window = glfwCreateWindow(width, height, TITLE.c_str(), nullptr, nullptr);
 		glfwSetWindowUserPointer(m_Window, this);
+
+		for (int key = GLFW_KEY_SPACE; key <= GLFW_KEY_LAST; key++) 
+		{
+            ms_CurrentKeyStates[key] = glfwGetKey(m_Window, key);
+        }
+
+		glfwSetKeyCallback(m_Window, SetKeyCallback);
 		glfwSetFramebufferSizeCallback(m_Window, framebufferResizeCallback);
 	}
 
@@ -79,6 +95,22 @@ namespace Engine
 		glfwTerminate();
 	}
 
+
+	int Application::GetKeyCurrentState(int key)
+	{
+		return ms_CurrentKeyStates[key];
+	}
+
+	int Application::GetKeyPreviousState(int key)
+	{
+		return ms_PreviousKeyStates[key];
+	}
+
+
+	void Application::SetKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+	{
+		ms_CurrentKeyStates[key] = action;
+	}
 
 	void Application::framebufferResizeCallback(GLFWwindow* window, int width, int height)
 	{

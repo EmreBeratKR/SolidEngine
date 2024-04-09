@@ -2,6 +2,7 @@
 
 #include <string>
 #include <GLFW/glfw3.h>
+#include <unordered_map>
 
 
 #include "layer_stack.h"
@@ -30,6 +31,7 @@ namespace Engine
 		bool shouldClose();
 		void close();
 
+		static void SetKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 		static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 
 	public:
@@ -44,5 +46,8 @@ namespace Engine
 		void setFrameBufferResized(bool value);
 		void PushLayer(Layer* layer);
 		void PopLayer(Layer* layer);
+
+		static int GetKeyCurrentState(int key);
+		static int GetKeyPreviousState(int key);
 	};
 }

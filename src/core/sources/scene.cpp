@@ -12,6 +12,7 @@
 #include "vulkan_buffer.h"
 #include "vulkan_graphic_engine.h"
 #include "time_api.h"
+#include "input.api.h"
 
 
 namespace Engine
@@ -92,8 +93,41 @@ namespace Engine
 
 		auto transform = gameObjects[1]->getTransform();
 		auto position = transform->position;
+		auto deltaPosition = glm::vec3 { 0.0f };
+		auto scale = transform->scale;
 
-		transform->position = { position.x, position.y + TimeAPI::DeltaTime() * 0.50f, position.z };
+		if (InputAPI::GetKey(KeyCode::KEY_W))
+		{
+			deltaPosition.y += 1.0f;
+		}
+
+		if (InputAPI::GetKey(KeyCode::KEY_S))
+		{
+			deltaPosition.y -= 1.0f;
+		}
+
+		if (InputAPI::GetKey(KeyCode::KEY_D))
+		{
+			deltaPosition.x += 1.0f;
+		}
+
+		if (InputAPI::GetKey(KeyCode::KEY_A))
+		{
+			deltaPosition.x -= 1.0f;
+		}
+
+		if (InputAPI::GetKeyDown(KeyCode::KEY_UP))
+		{
+			scale = scale * -1.0f;
+		}
+
+		if (InputAPI::GetKeyUp(KeyCode::KEY_UP))
+		{
+			scale = scale * -1.0f;
+		}
+
+		transform->position = position + deltaPosition * (float) TimeAPI::DeltaTime() * 2.0f;
+		transform->scale = scale;
 	}
 
 	void Scene::OnRender()
