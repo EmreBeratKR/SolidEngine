@@ -10,13 +10,31 @@ namespace Engine
     }
 
 
+    static bool IsDown(int previousState, int currentState)
+    {
+        return currentState == GLFW_PRESS && previousState != GLFW_PRESS;
+    }
+
+    static bool IsHold(int previousState, int currentState)
+    {
+        if (currentState == GLFW_REPEAT) return true;
+
+        return currentState == GLFW_PRESS && previousState != GLFW_RELEASE;
+    }
+
+    static bool IsUp(int previousState, int currentState)
+    {
+        return currentState == GLFW_RELEASE && previousState != GLFW_RELEASE;
+    }
+
+
     bool InputAPI::GetKeyDown(KeyCode keycode)
     {
         auto intKeyCode = (int) keycode;
         auto previousState = Application::GetKeyPreviousState(intKeyCode);
         auto currentState = Application::GetKeyCurrentState(intKeyCode);
 
-        return currentState == GLFW_PRESS && previousState != GLFW_PRESS;
+        return IsDown(previousState, currentState);
     }
 
     bool InputAPI::GetKey(KeyCode keycode)
@@ -25,9 +43,7 @@ namespace Engine
         auto previousState = Application::GetKeyPreviousState(intKeyCode);
         auto currentState = Application::GetKeyCurrentState(intKeyCode);
 
-        if (currentState == GLFW_REPEAT) return true;
-
-        return currentState == GLFW_PRESS && previousState != GLFW_RELEASE;
+        return IsHold(previousState, currentState);
     }
 
     bool InputAPI::GetKeyUp(KeyCode keycode)
@@ -36,9 +52,36 @@ namespace Engine
         auto previousState = Application::GetKeyPreviousState(intKeyCode);
         auto currentState = Application::GetKeyCurrentState(intKeyCode);
 
-        return currentState == GLFW_RELEASE && previousState != GLFW_RELEASE;
+        return IsUp(previousState, currentState);
     }
 
+
+    bool InputAPI::GetMouseButtonDown(MouseButton mouseButton)
+    {
+        auto intMouseButton = (int) mouseButton;
+        auto previousState = Application::GetMouseButtonPreviousState(intMouseButton);
+        auto currentState = Application::GetMouseButtonCurrentState(intMouseButton);
+
+        return IsDown(previousState, currentState);
+    }
+
+    bool InputAPI::GetMouseButton(MouseButton mouseButton)
+    {
+        auto intMouseButton = (int) mouseButton;
+        auto previousState = Application::GetMouseButtonPreviousState(intMouseButton);
+        auto currentState = Application::GetMouseButtonCurrentState(intMouseButton);
+
+        return IsHold(previousState, currentState);
+    }
+
+    bool InputAPI::GetMouseButtonUp(MouseButton mouseButton)
+    {
+        auto intMouseButton = (int) mouseButton;
+        auto previousState = Application::GetMouseButtonPreviousState(intMouseButton);
+        auto currentState = Application::GetMouseButtonCurrentState(intMouseButton);
+
+        return IsUp(previousState, currentState);
+    }
 
     int InputAPI::GetMouseX()
     {
@@ -48,5 +91,15 @@ namespace Engine
     int InputAPI::GetMouseY()
     {
         return Application::GetMouseY();
+    }
+
+    int InputAPI::GetMouseDeltaX()
+    {
+        return Application::GetMouseDeltaX();
+    }
+
+    int InputAPI::GetMouseDeltaY()
+    {
+        return Application::GetMouseDeltaY();
     }
 }

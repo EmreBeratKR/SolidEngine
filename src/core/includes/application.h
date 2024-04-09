@@ -30,8 +30,10 @@ namespace Engine
 		void init();
 		bool shouldClose();
 		void close();
+		void GetCurrentMousePosition(double* x, double* y);
 
 		static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+		static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 		static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 
 	public:
@@ -49,7 +51,11 @@ namespace Engine
 
 		static int GetKeyCurrentState(int key);
 		static int GetKeyPreviousState(int key);
+		static int GetMouseButtonCurrentState(int key);
+		static int GetMouseButtonPreviousState(int key);
 		static int GetMouseX();
 		static int GetMouseY();
+		static int GetMouseDeltaX();
+		static int GetMouseDeltaY();
 	};
 }

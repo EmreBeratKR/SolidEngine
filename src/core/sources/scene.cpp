@@ -95,6 +95,7 @@ namespace Engine
 		auto position = transform->position;
 		auto deltaPosition = glm::vec3 { 0.0f };
 		auto scale = transform->scale;
+		auto rotation = transform->rotation;
 
 		if (InputAPI::GetKey(KeyCode::KEY_W))
 		{
@@ -126,10 +127,23 @@ namespace Engine
 			scale = scale * -1.0f;
 		}
 
+		if (InputAPI::GetMouseButtonDown(MouseButton::MIDDLE))
+		{
+			rotation *= glm::quat(glm::radians(glm::vec3(0.0f, 30.0f, 0.0f)));
+		}
+
+		if (InputAPI::GetMouseButtonUp(MouseButton::MIDDLE))
+		{
+			rotation *= glm::quat(glm::radians(glm::vec3(0.0f, -30.0f, 0.0f)));
+		}
+
 		transform->position = position + deltaPosition * (float) TimeAPI::DeltaTime() * 2.0f;
+		transform->rotation = rotation;
 		transform->scale = scale;
 
 		gameObjects[2]->getTransform()->position = { (InputAPI::GetMouseX() - 300) * 0.01f, (InputAPI::GetMouseY() - 300) * 0.01f, 0.0f };
+
+		printf("mouse delta: (%d, %d)\n", InputAPI::GetMouseDeltaX(), InputAPI::GetMouseDeltaY());
 	}
 
 	void Scene::OnRender()
