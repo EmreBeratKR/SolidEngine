@@ -38,6 +38,7 @@ namespace Engine::Rendering
 
     VertexBuffer::~VertexBuffer()
     {
+        VulkanGraphicEngine::FreeMemory(memory);
         VulkanGraphicEngine::DestroyBuffer(buffer);
     }
 
@@ -56,6 +57,7 @@ namespace Engine::Rendering
 
     IndexBuffer::~IndexBuffer()
     {
+        VulkanGraphicEngine::FreeMemory(memory);
         VulkanGraphicEngine::DestroyBuffer(buffer);
     }
 

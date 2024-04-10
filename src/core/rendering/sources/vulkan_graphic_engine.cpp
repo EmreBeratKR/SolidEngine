@@ -157,6 +157,11 @@ namespace Engine::Rendering
         vkDestroyBuffer(GetInstance()->GetLogicalDevice(), buffer, nullptr);
     }
 
+    void VulkanGraphicEngine::FreeMemory(VkDeviceMemory memory)
+    {
+        vkFreeMemory(GetInstance()->GetLogicalDevice(), memory, nullptr);
+    }
+
     void VulkanGraphicEngine::setViewAndProjectionMatrices(glm::mat4 view, glm::mat4 proj)
     {
         auto instance = GetInstance();
@@ -607,9 +612,6 @@ namespace Engine::Rendering
 #endif
             vkDestroySurfaceKHR(instance, surface, nullptr);
             vkDestroyInstance(instance, nullptr);
-
-            glfwDestroyWindow(window);
-            glfwTerminate();
         }
 
         void VulkanGraphicEngine::createInstance()

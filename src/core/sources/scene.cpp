@@ -17,6 +17,10 @@
 
 namespace Engine
 {
+	static Rendering::Model* model;
+	static Rendering::Model* model1;
+
+
 	Scene::Scene()
 	{
 		SceneManager::activeScene = this;
@@ -31,7 +35,7 @@ namespace Engine
 		Components::Camera::main = camera;
 
 		// Create Model
-		auto model = IO::loadObj("resources/models/viking_room.obj");
+		model = IO::loadObj("resources/models/viking_room.obj");
 		auto modelGameObject = new GameObject();
 		auto meshRenderer = new Components::MeshRenderer();
 		auto mesh = model->meshes[0];
@@ -45,7 +49,7 @@ namespace Engine
 		meshRenderer->setMesh(mesh);
 
 		// Create Model
-		auto model1 = IO::loadObj("resources/models/torus.obj");
+		model1 = IO::loadObj("resources/models/torus.obj");
 		auto modelGameObject1 = new GameObject();
 		auto meshRenderer1 = new Components::MeshRenderer();
 		auto mesh1 = model1->meshes[0];
@@ -81,6 +85,9 @@ namespace Engine
 		{
 			delete gameObject;
 		}
+
+		delete model;
+		delete model1;
 	}
 
 

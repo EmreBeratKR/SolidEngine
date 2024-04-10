@@ -12,9 +12,6 @@ namespace Engine
 	class LayerStack
 	{
 	public:
-		LayerStack();
-		~LayerStack();
-
 		void OnUpdate();
 		void OnRender();
 		void PushLayer(Layer* layer);

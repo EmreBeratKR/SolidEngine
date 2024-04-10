@@ -7,21 +7,6 @@
 
 namespace Engine
 {
-	LayerStack::LayerStack()
-	{
-
-	}
-
-	LayerStack::~LayerStack()
-	{
-		for (Layer* layer : m_Layers)
-		{
-			layer->OnDetach();
-			delete layer;
-		}
-	}
-
-
 	void LayerStack::OnUpdate()
 	{
 		for (const auto& layer : m_Layers)
