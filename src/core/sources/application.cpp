@@ -185,6 +185,16 @@ namespace Engine
 		return ms_MouseDeltaY;
 	}
 
+	void Application::setCursorNormal()
+	{
+		glfwSetInputMode(instance->m_Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+
+	void Application::setCursorLocked()
+	{
+		glfwSetInputMode(instance->m_Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+
 	void Application::onKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
 		ms_CurrentKeyStates[key] = action;
