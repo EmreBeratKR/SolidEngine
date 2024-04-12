@@ -1,6 +1,3 @@
-#define GLFW_INCLUDE_VULKAN
-
-
 #include "application.h"
 #include "vulkan_graphic_engine.h"
 #include "scene_manager.h"

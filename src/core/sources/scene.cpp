@@ -19,6 +19,8 @@ namespace Engine
 {
 	static Rendering::Model* model;
 	static Rendering::Model* model1;
+	static float cameraPitch = 0.0f;
+	static float cameraYaw = 0.0f;
 
 
 	Scene::Scene()
@@ -30,53 +32,27 @@ namespace Engine
 		auto camera = Components::Camera::perspective(60.0f, 0.01f, 100.0f);
 
 		cameraGameObject->addComponent(camera);
-		camera->getTransform()->position = {0.0f, 0.0f, -8.0f};
+		camera->getTransform()->position = {0.0f, 2.0f, -8.0f};
 
 		Components::Camera::main = camera;
 
 		// Create Model
-		model = IO::loadObj("resources/models/viking_room.obj");
+		model = IO::loadObj("resources/models/monkey.obj");
 		auto modelGameObject = new GameObject();
 		auto meshRenderer = new Components::MeshRenderer();
 		auto mesh = model->meshes[0];
 
 		mesh->vertexBuffer->Allocate();
 		mesh->indexBuffer->Allocate();
-		modelGameObject->getTransform()->position = { 0.0f, -2.0f, 0.0f };
-		modelGameObject->getTransform()->rotation = glm::quat(glm::radians(glm::vec3(10.0f, 225.0f, -10.0f)));
+		modelGameObject->getTransform()->position = { 1.0f, 4.0f, 2.0f };
+		modelGameObject->getTransform()->rotation = glm::quat(glm::radians(glm::vec3(0.0f, 0.0f, 0.0f)));
 		modelGameObject->getTransform()->scale = { 1.0f, 1.0f, 1.0f };
 		modelGameObject->addComponent(meshRenderer);
 		meshRenderer->setMesh(mesh);
 
-		// Create Model
-		model1 = IO::loadObj("resources/models/torus.obj");
-		auto modelGameObject1 = new GameObject();
-		auto meshRenderer1 = new Components::MeshRenderer();
-		auto mesh1 = model1->meshes[0];
-
-		mesh1->vertexBuffer->Allocate();
-		mesh1->indexBuffer->Allocate();
-		modelGameObject1->getTransform()->position = { 2.0f, -2.0f, 0.0f };
-		modelGameObject1->getTransform()->rotation = glm::quat(glm::radians(glm::vec3(10.0f, 225.0f, -10.0f)));
-		modelGameObject1->getTransform()->scale = { 0.5f, 0.5f, 0.5f };
-		modelGameObject1->addComponent(meshRenderer1);
-		meshRenderer1->setMesh(mesh1);
-
-		auto modelGameObject2 = new GameObject();
-		auto meshRenderer2 = new Components::MeshRenderer();
-		auto mesh2 = mesh;
-		
-		modelGameObject2->getTransform()->position = { -2.0f, -1.0f, 0.0f };
-		modelGameObject2->getTransform()->rotation = glm::quat(glm::radians(glm::vec3(10.0f, 225.0f, -10.0f)));
-		modelGameObject2->getTransform()->scale = { 0.75f, 0.75f, 0.75f };
-		modelGameObject2->addComponent(meshRenderer2);
-		meshRenderer2->setMesh(mesh2);
-
 		// Add GameObjects
 		AddGameObject(cameraGameObject);
 		AddGameObject(modelGameObject);
-		AddGameObject(modelGameObject1);
-		AddGameObject(modelGameObject2);
 	}
 
 	Scene::~Scene()
@@ -98,59 +74,87 @@ namespace Engine
 			gameObject->OnUpdate();
 		}
 
-		auto transform = gameObjects[1]->getTransform();
+		// CAMERA CONTROL
+		auto gameObject = gameObjects[0];
+		auto transform = gameObject->getTransform();
 		auto position = transform->position;
-		auto deltaPosition = glm::vec3 { 0.0f };
-		auto scale = transform->scale;
 		auto rotation = transform->rotation;
+		auto deltaPosition = glm::vec3 {0.0f};
 
 		if (InputAPI::getKey(KeyCode::KEY_W))
 		{
-			deltaPosition.y += 1.0f;
+			deltaPosition += rotation * glm::vec3{0.0f, 0.0f, 1.0f};
 		}
 
 		if (InputAPI::getKey(KeyCode::KEY_S))
 		{
-			deltaPosition.y -= 1.0f;
+			deltaPosition += rotation * glm::vec3{0.0f, 0.0f, -1.0f};
 		}
 
 		if (InputAPI::getKey(KeyCode::KEY_D))
 		{
-			deltaPosition.x += 1.0f;
+			deltaPosition += rotation * glm::vec3{1.0f, 0.0f, 0.0f};
 		}
 
 		if (InputAPI::getKey(KeyCode::KEY_A))
 		{
-			deltaPosition.x -= 1.0f;
+			deltaPosition += rotation * glm::vec3{-1.0f, 0.0f, 0.0f};
 		}
 
-		if (InputAPI::getKeyDown(KeyCode::KEY_UP))
+		if (InputAPI::getKey(KeyCode::KEY_E))
 		{
-			scale = scale * -1.0f;
+			deltaPosition += rotation * glm::vec3{0.0f, 1.0f, 0.0f};
 		}
 
-		if (InputAPI::getKeyUp(KeyCode::KEY_UP))
+		if (InputAPI::getKey(KeyCode::KEY_Q))
 		{
-			scale = scale * -1.0f;
+			deltaPosition += rotation * glm::vec3{0.0f, -1.0f, 0.0f};
 		}
 
-		if (InputAPI::getMouseButtonDown(MouseButton::MIDDLE))
+		if (InputAPI::getKeyDown(KeyCode::KEY_ENTER))
 		{
-			rotation *= glm::quat(glm::radians(glm::vec3(0.0f, 30.0f, 0.0f)));
+			InputAPI::setCursorLocked();
 		}
 
-		if (InputAPI::getMouseButtonUp(MouseButton::MIDDLE))
+		if (InputAPI::getKeyDown(KeyCode::KEY_ESCAPE))
 		{
-			rotation *= glm::quat(glm::radians(glm::vec3(0.0f, -30.0f, 0.0f)));
+			InputAPI::setCursorNormal();
 		}
 
-		transform->position = position + deltaPosition * (float) TimeAPI::DeltaTime() * 2.0f;
-		transform->rotation = rotation;
-		transform->scale = scale;
+		cameraPitch -= InputAPI::getMouseDeltaY() * TimeAPI::DeltaTime() * 10.0f;
+		cameraYaw += InputAPI::getMouseDeltaX() * TimeAPI::DeltaTime() * 10.0f;
 
-		gameObjects[2]->getTransform()->position = { (InputAPI::getMouseX() - 300) * 0.01f, (InputAPI::getMouseY() - 300) * 0.01f, 0.0f };
+		if (cameraPitch > 90.0f)
+		{
+			cameraPitch = 90.0f;
+		}
 
-		printf("mouse delta: (%d, %d)\n", InputAPI::getMouseDeltaX(), InputAPI::getMouseDeltaY());
+		else if (cameraPitch < -90.0f)
+		{
+			cameraPitch = -90.0f;
+		}
+
+		transform->position = position + (deltaPosition * (float) TimeAPI::DeltaTime() * 5.0f);
+		transform->rotation = glm::quat(glm::radians(glm::vec3(cameraPitch, cameraYaw, 0.0f)));
+		
+
+		// SCENE
+
+		auto targetGameObject = gameObjects[1];
+		auto targetTransform = targetGameObject->getTransform();
+		auto deltaAngle = 0.0f;
+
+		if (InputAPI::getKey(KeyCode::KEY_RIGHT))
+		{
+			deltaAngle += 1.0f;
+		}
+
+		if (InputAPI::getKey(KeyCode::KEY_LEFT))
+		{
+			deltaAngle -= 1.0f;
+		}
+
+		targetTransform->rotation = targetTransform->rotation * glm::quat(glm::radians(glm::vec3(0.0f, deltaAngle * TimeAPI::DeltaTime() * 50.0f, 0.0f)));
 	}
 
 	void Scene::OnRender()

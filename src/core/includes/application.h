@@ -59,5 +59,7 @@ namespace Engine
 		static int getMouseY();
 		static int getMouseDeltaX();
 		static int getMouseDeltaY();
+		static void setCursorNormal();
+		static void setCursorLocked();
 	};
 }

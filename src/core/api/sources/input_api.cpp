@@ -96,4 +96,15 @@ namespace Engine
     {
         return Application::getMouseDeltaY();
     }
+
+
+    void InputAPI::setCursorNormal()
+    {
+        Application::setCursorNormal();   
+    }
+
+    void InputAPI::setCursorLocked()
+    {
+        Application::setCursorLocked();   
+    }
 }
