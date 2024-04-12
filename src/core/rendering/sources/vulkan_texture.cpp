@@ -118,4 +118,10 @@ namespace Engine::Rendering
     {
         return sampler;
     }
+
+
+    VulkanTexture* VulkanTexture::Create(const char* path)
+    {
+        return new VulkanTexture(path, VulkanGraphicEngine::GetLogicalDevice(), VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+    }
 }

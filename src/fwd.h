@@ -18,6 +18,7 @@ namespace Engine::Rendering
 {
     class VulkanDescriptorSetLayout;
     class VulkanDescriptorPool;
+    class VulkanDescriptorWriter;
     class PushConstantData;
     class VulkanTexture;
     class VertexBuffer;

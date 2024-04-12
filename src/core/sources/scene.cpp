@@ -10,6 +10,7 @@
 #include "model_loader.h"
 #include "model.h"
 #include "vulkan_buffer.h"
+#include "vulkan_texture.h"
 #include "vulkan_graphic_engine.h"
 #include "time_api.h"
 #include "input.api.h"
@@ -19,6 +20,7 @@ namespace Engine
 {
 	static Rendering::Model* model;
 	static Rendering::Model* model1;
+	static Rendering::VulkanTexture* texture;
 	static float cameraPitch = 0.0f;
 	static float cameraYaw = 0.0f;
 
@@ -35,6 +37,9 @@ namespace Engine
 		camera->getTransform()->position = {0.0f, 2.0f, -8.0f};
 
 		Components::Camera::main = camera;
+
+		// Create Texture
+		texture = Rendering::VulkanTexture::Create("resources/textures/unity.png");
 
 		// Create Model
 		model = IO::loadObj("resources/models/monkey.obj");
@@ -155,6 +160,11 @@ namespace Engine
 		}
 
 		targetTransform->rotation = targetTransform->rotation * glm::quat(glm::radians(glm::vec3(0.0f, deltaAngle * TimeAPI::DeltaTime() * 50.0f, 0.0f)));
+
+		if (InputAPI::getKeyDown(KeyCode::KEY_SPACE))
+		{
+			Rendering::VulkanGraphicEngine::setTexture(1, texture);
+		}
 	}
 
 	void Scene::OnRender()

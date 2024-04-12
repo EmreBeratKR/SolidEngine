@@ -32,5 +32,7 @@ namespace Engine::Rendering
 
         VkImageView GetImageView() const;
         VkSampler GetSampler() const;
+
+        static VulkanTexture* Create(const char* path);
     };
 }

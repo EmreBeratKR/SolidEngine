@@ -212,14 +212,37 @@ namespace Engine::Rendering
         return *this;
     }
 
-    bool VulkanDescriptorWriter::Build(VkDescriptorSet& set)
+    void VulkanDescriptorWriter::UpdateWriteImage(uint32_t binding, VkDescriptorImageInfo* imageInfo, VkDescriptorSet& set)
+    {
+        auto isValidBinding = setLayout.bindings.count(binding) == 1;
+
+        if (!isValidBinding)
+        {
+            Log::Error("Layout does not contain specified binding");
+        }
+
+        auto &bindingDescription = setLayout.bindings[binding];
+
+        auto isBindingCountMatch = bindingDescription.descriptorCount == 1;
+
+        if (!isBindingCountMatch)
+        {
+            Log::Error("Binding single descriptor info, but binding expects multiple");
+        }
+
+        writes[binding].pImageInfo = imageInfo;
+        
+        Overwrite(set);
+    }
+
+    VulkanDescriptorWriter* VulkanDescriptorWriter::Build(VkDescriptorSet& set)
     {
         bool success = pool.AllocateDescriptor(*setLayout.GetDescriptorSetLayout(), set);
 
-        if (!success) return false;
+        if (!success) return nullptr;
 
         Overwrite(set);
-        return true;
+        return this;
     }
 
     void VulkanDescriptorWriter::Overwrite(VkDescriptorSet& set)

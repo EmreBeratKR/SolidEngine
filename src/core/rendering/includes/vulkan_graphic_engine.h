@@ -91,6 +91,7 @@ namespace Engine::Rendering
 
         VulkanDescriptorSetLayout* descriptorSetLayout;
         VulkanDescriptorPool* descriptorPool;
+        std::vector<VulkanDescriptorWriter*> descriptorWriters;
         std::vector<VkDescriptorSet> descriptorSets;
 
         std::vector<VkBuffer> uniformBuffers;
@@ -158,6 +159,7 @@ namespace Engine::Rendering
         static void setIndexBuffer(IndexBuffer* buffer);
         static void setViewAndProjectionMatrices(glm::mat4 view, glm::mat4 proj);
         static void setPushConstant(PushConstantData pushConstant);
+        static void setTexture(uint32_t binding, VulkanTexture* texture);
         static void drawFrame();
         static VkCommandBuffer beginFrame();
         static void endFrame();

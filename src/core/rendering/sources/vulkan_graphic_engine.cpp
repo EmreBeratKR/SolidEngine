@@ -182,6 +182,23 @@ namespace Engine::Rendering
         vkCmdPushConstants(commandBuffer, instance->pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstantData), &pushConstant);
     }
 
+    void VulkanGraphicEngine::setTexture(uint32_t binding, VulkanTexture* texture)
+    {
+        auto instance = GetInstance();
+
+        instance->texture = texture;
+
+        for (int i = 0; i < instance->MAX_FRAMES_IN_FLIGHT; i++)
+        {
+            VkDescriptorImageInfo imageInfo;
+            imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            imageInfo.imageView = texture->GetImageView();
+            imageInfo.sampler = texture->GetSampler();
+
+            instance->descriptorWriters[i]->UpdateWriteImage(1, &imageInfo, instance->descriptorSets[i]);
+        }
+    }
+
     VkCommandBuffer VulkanGraphicEngine::beginFrame()
     {
         auto instance = GetInstance();
@@ -1163,11 +1180,9 @@ namespace Engine::Rendering
 
         void VulkanGraphicEngine::createDescriptorSets()
         {
-            std::vector<VkDescriptorSetLayout> layouts(MAX_FRAMES_IN_FLIGHT);
-
             descriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
 
-            for (int i = 0; i < layouts.size(); i++)
+            for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
             {
                 VkDescriptorBufferInfo bufferInfo{};
                 bufferInfo.buffer = uniformBuffers[i];
@@ -1179,16 +1194,18 @@ namespace Engine::Rendering
                 imageInfo.imageView = texture->GetImageView();
                 imageInfo.sampler = texture->GetSampler();
 
-                VulkanDescriptorWriter(*descriptorSetLayout, *descriptorPool)
+                auto writer = (*(new VulkanDescriptorWriter(*descriptorSetLayout, *descriptorPool)))
                     .WriteBuffer(0, &bufferInfo)
                     .WriteImage(1, &imageInfo)
                     .Build(descriptorSets[i]);
+
+                descriptorWriters.push_back(writer);
             }
         }
 
         void VulkanGraphicEngine::createTextureImage()
         {
-            texture = new VulkanTexture("resources/textures/viking_room.png", logicalDevice, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+            texture = VulkanTexture::Create("resources/textures/viking_room.png");
         }
 
         VkCommandBuffer VulkanGraphicEngine::beginSingleTimeCommands()

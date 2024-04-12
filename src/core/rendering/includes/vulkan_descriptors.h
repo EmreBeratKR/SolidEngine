@@ -92,8 +92,9 @@ namespace Engine::Rendering
 
         VulkanDescriptorWriter& WriteBuffer(uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
         VulkanDescriptorWriter& WriteImage(uint32_t binding, VkDescriptorImageInfo* imageInfo);
+        void UpdateWriteImage(uint32_t binding, VkDescriptorImageInfo* imageInfo, VkDescriptorSet& set);
 
-        bool Build(VkDescriptorSet& set);
+        VulkanDescriptorWriter* Build(VkDescriptorSet& set);
         void Overwrite(VkDescriptorSet& set);
 
     private:
