@@ -186,6 +186,8 @@ namespace Engine::Rendering
     {
         auto instance = GetInstance();
 
+        waitIdle();
+
         instance->texture = texture;
 
         for (int i = 0; i < instance->MAX_FRAMES_IN_FLIGHT; i++)
@@ -1559,7 +1561,9 @@ namespace Engine::Rendering
             const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
             void* pUserData)
         {
-            std::cerr << "[VALIDATION] " << pCallbackData->pMessage << std::endl;
+            std::cout << "======================== [VALIDATION] ==========================" << std::endl;
+            std::cerr << pCallbackData->pMessage << std::endl;
+            std::cout << "================================================================" << std::endl;
 
             return VK_FALSE;
         }
