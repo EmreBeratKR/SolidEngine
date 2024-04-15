@@ -21,6 +21,7 @@ namespace Engine
 	static Rendering::Model* model;
 	static Rendering::Model* model1;
 	static Rendering::VulkanTexture* texture;
+	static Rendering::VulkanTexture* texture1;
 	static float cameraPitch = 0.0f;
 	static float cameraYaw = 0.0f;
 
@@ -40,6 +41,7 @@ namespace Engine
 
 		// Create Texture
 		texture = Rendering::VulkanTexture::Create("resources/textures/unity.png");
+		texture1 = Rendering::VulkanTexture::Create("resources/textures/viking_room.png");
 
 		// Create Model
 		model = IO::loadObj("resources/models/monkey.obj");
@@ -55,9 +57,24 @@ namespace Engine
 		modelGameObject->addComponent(meshRenderer);
 		meshRenderer->setMesh(mesh);
 
+		// Create Model
+		model1 = IO::loadObj("resources/models/cube.obj");
+		auto modelGameObject1 = new GameObject();
+		auto meshRenderer1 = new Components::MeshRenderer();
+		auto mesh1 = model1->meshes[0];
+
+		mesh1->vertexBuffer->Allocate();
+		mesh1->indexBuffer->Allocate();
+		modelGameObject1->getTransform()->position = { 1.0f, 0.0f, 2.0f };
+		modelGameObject1->getTransform()->rotation = glm::quat(glm::radians(glm::vec3(0.0f, 0.0f, 0.0f)));
+		modelGameObject1->getTransform()->scale = { 1.0f, 1.0f, 1.0f };
+		modelGameObject1->addComponent(meshRenderer1);
+		meshRenderer1->setMesh(mesh1);
+
 		// Add GameObjects
 		AddGameObject(cameraGameObject);
 		AddGameObject(modelGameObject);
+		AddGameObject(modelGameObject1);
 	}
 
 	Scene::~Scene()
@@ -164,6 +181,11 @@ namespace Engine
 		if (InputAPI::getKeyDown(KeyCode::KEY_SPACE))
 		{
 			Rendering::VulkanGraphicEngine::setTexture(1, texture);
+		}
+
+		if (InputAPI::getKeyUp(KeyCode::KEY_SPACE))
+		{
+			Rendering::VulkanGraphicEngine::setTexture(1, texture1);
 		}
 	}
 

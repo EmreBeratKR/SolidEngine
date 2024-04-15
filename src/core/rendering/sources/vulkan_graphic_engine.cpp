@@ -192,12 +192,12 @@ namespace Engine::Rendering
 
         for (int i = 0; i < instance->MAX_FRAMES_IN_FLIGHT; i++)
         {
-            VkDescriptorImageInfo imageInfo;
-            imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-            imageInfo.imageView = texture->GetImageView();
-            imageInfo.sampler = texture->GetSampler();
+            auto imageInfo = &instance->imageInfos[i];
+            imageInfo->imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            imageInfo->imageView = texture->GetImageView();
+            imageInfo->sampler = texture->GetSampler();
 
-            instance->descriptorWriters[i]->UpdateWriteImage(1, &imageInfo, instance->descriptorSets[i]);
+            instance->descriptorWriters[i]->UpdateWriteImage(1, imageInfo, instance->descriptorSets[i]);
         }
     }
 
@@ -1183,22 +1183,24 @@ namespace Engine::Rendering
         void VulkanGraphicEngine::createDescriptorSets()
         {
             descriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
+            bufferInfos.resize(MAX_FRAMES_IN_FLIGHT);
+            imageInfos.resize(MAX_FRAMES_IN_FLIGHT);
 
             for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
             {
-                VkDescriptorBufferInfo bufferInfo{};
-                bufferInfo.buffer = uniformBuffers[i];
-                bufferInfo.offset = 0;
-                bufferInfo.range = sizeof(UniformBufferObject);
+                auto bufferInfo = &bufferInfos[i];
+                bufferInfo->buffer = uniformBuffers[i];
+                bufferInfo->offset = 0;
+                bufferInfo->range = sizeof(UniformBufferObject);
 
-                VkDescriptorImageInfo imageInfo{};
-                imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                imageInfo.imageView = texture->GetImageView();
-                imageInfo.sampler = texture->GetSampler();
+                auto imageInfo = &imageInfos[i];
+                imageInfo->imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                imageInfo->imageView = texture->GetImageView();
+                imageInfo->sampler = texture->GetSampler();
 
                 auto writer = (*(new VulkanDescriptorWriter(*descriptorSetLayout, *descriptorPool)))
-                    .WriteBuffer(0, &bufferInfo)
-                    .WriteImage(1, &imageInfo)
+                    .WriteBuffer(0, bufferInfo)
+                    .WriteImage(1, imageInfo)
                     .Build(descriptorSets[i]);
 
                 descriptorWriters.push_back(writer);

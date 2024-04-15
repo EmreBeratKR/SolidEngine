@@ -94,6 +94,9 @@ namespace Engine::Rendering
         std::vector<VulkanDescriptorWriter*> descriptorWriters;
         std::vector<VkDescriptorSet> descriptorSets;
 
+        std::vector<VkDescriptorBufferInfo> bufferInfos;
+        std::vector<VkDescriptorImageInfo> imageInfos;
+
         std::vector<VkBuffer> uniformBuffers;
         std::vector<VkDeviceMemory> uniformBuffersMemory;
         std::vector<void*> uniformBuffersMapped;
