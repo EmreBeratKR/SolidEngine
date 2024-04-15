@@ -28,6 +28,7 @@ ifeq ($(OS),Windows_NT)
 else
 	ROOT_DIR = $(realpath $(shell dirname $(firstword $(MAKEFILE_LIST))))
 	MK_DIR = mkdir -p $(1)
+	RM_DIR = rm -rf $(1)
 	CLEAR_CONSOLE = clear
 	INC_DIRS = $(shell find $(SRC_DIR) -type d)
 	INC_DIRS_FLAG = $(addprefix -I$(ROOT_DIR)/,$(INC_DIRS))
@@ -80,21 +81,21 @@ debug: clear_console log_debug_build compile_shaders log_compile $(DEBUG_BUILD_D
 $(RELEASE_BUILD_DIR)/%.o: %.cpp
 	@$(call MK_DIR,$(dir $@))
 	@echo $< compiling as $@
-	@$(CXX) $(COMPILER_FLAGS) -c $< -o $@ $(INCLUDE_FLAGS) $(LINKER_FLAGS) $(PREPROCESSORS)
+	@$(CXX) $(COMPILER_FLAGS) -c $< -o $@ $(INCLUDE_FLAGS) $(PREPROCESSORS)
 
 $(RELEASE_BUILD_DIR)/$(APP_NAME): $(RELEASE_BUILD_OBJ_FILES)
 	@$(call ECHO_TITLE,LINKING FILES)
-	@$(CXX) $(COMPILER_FLAGS) $^ -o $@ $(INCLUDE_FLAGS) $(LINKER_FLAGS) $(PREPROCESSORS)
+	@$(CXX) $^ -o $@ $(LINKER_FLAGS)
 	@$(call ECHO_TITLE,LINKING FILES SUCCEED)
 
 $(DEBUG_BUILD_DIR)/%.o: %.cpp
 	@$(call MK_DIR,$(dir $@))
 	@echo $< compiling as $@
-	@$(CXX) $(COMPILER_FLAGS) $(DEBUG_BUILD_COMPILER_FLAGS) -c $< -o $@ $(INCLUDE_FLAGS) $(LINKER_FLAGS) $(PREPROCESSORS) $(DEBUG_BUILD_PREPROCCESTOR_FLAGS)
+	@$(CXX) $(COMPILER_FLAGS) $(DEBUG_BUILD_COMPILER_FLAGS) -c $< -o $@ $(INCLUDE_FLAGS) $(PREPROCESSORS) $(DEBUG_BUILD_PREPROCCESTOR_FLAGS)
 
 $(DEBUG_BUILD_DIR)/$(APP_NAME): $(DEBUG_BUILD_OBJ_FILES)
 	@$(call ECHO_TITLE,LINKING FILES)
-	@$(CXX) $(COMPILER_FLAGS) $(DEBUG_BUILD_COMPILER_FLAGS) $^ -o $@ $(INCLUDE_FLAGS) $(LINKER_FLAGS) $(PREPROCESSORS) $(DEBUG_BUILD_PREPROCCESTOR_FLAGS)
+	@$(CXX) $^ -o $@ $(LINKER_FLAGS)
 	@$(call ECHO_TITLE,LINKING FILES SUCCEED)
 
 compile_shaders:
